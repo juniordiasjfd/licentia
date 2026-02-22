@@ -1,0 +1,96 @@
+{% extends "core/base.html" %}
+
+{% block extra_css %}
+
+{% endblock %}
+
+{% block page_title %}Gerenciamento de usuários{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between">
+        <h3 class="card-title">
+            <i class="fa-solid fa-users-gear me-2 text-teal"></i>
+            Usuários registrados
+        </h3>
+    </div>
+
+    <div class="table-responsive pb-5">
+        <table class="table card-table table-vcenter text-nowrap">
+            <thead>
+                <tr>
+                    <th class="table-icon"><i class="fa-solid fa-hashtag"></i></th>
+                    <th>Usuário</th>
+                    <th><i class="fa-solid fa-id-card me-1"></i> Nome</th>
+                    <th><i class="fa-solid fa-envelope me-1"></i> E-mail</th>
+                    <th><i class="fa-solid fa-calendar-day me-1"></i> Data de criação</th>
+                    <th>Status</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                <tr>
+                    <td class="text-muted">{{ usuario.id }}</td>
+                    <td class="fw-bold">{{ usuario.username }}</td>
+                    <td>{{ usuario.get_full_name|default:"-" }}</td>
+                    <td>{{ usuario.email }}</td>
+                    <td>{{ usuario.date_joined|date:"d/m/Y" }}</td>
+                    <td>
+                        {% if usuario.is_active %}
+                        <span class="badge bg-teal-lt">
+                            <i class="fa-solid fa-circle status-dot me-1"></i> Ativo
+                        </span>
+                        {% else %}
+                        <span class="badge bg-warning-lt">
+                            <i class="fa-solid fa-clock status-dot me-1"></i> Pendente
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        {% if not usuario.is_active %}
+                        <a href="{% url 'users:ativar_usuario' usuario.pk %}" class="btn btn-sm btn-teal shadow-sm"
+                            title="Configurar e ativar">
+                            <i class="fa-solid fa-user-gear me-1"></i> Analisar
+                        </a>
+                        {% else %}
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown">
+                                <i class="fa-solid fa-ellipsis-vertical"></i> <span style="min-width: 5px;"></span> Opções
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="{% url 'users:ativar_usuario' usuario.pk %}">
+                                    <i class="fa-solid fa-user-gear me-2 text-teal"></i> Analisar
+                                </a>
+
+                                <div class="dropdown-divider"></div>
+
+                                <form action="{% url 'users:suspender_usuario' usuario.pk %}" method="post"
+                                    id="form-suspender-{{ usuario.pk }}">
+                                    {% csrf_token %}
+                                    <button type="button" class="dropdown-item text-danger"
+                                        onclick="if(confirm('Desejas realmente suspender o acesso deste utilizador?')) document.getElementById('form-suspender-{{ usuario.pk }}').submit();">
+                                        <i class="fa-solid fa-user-slash me-2"></i> Suspender
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-5">
+                        <i class="fa-solid fa-user-slash fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Nenhum usuário aguardando aprovação.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div style="min-height: 50px;">
+
+        </div>
+    </div>
+</div>
+{% endblock %}
