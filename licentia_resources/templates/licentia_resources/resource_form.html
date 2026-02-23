@@ -1,0 +1,41 @@
+{% extends "core/base.html" %}
+
+{% block page_title %}
+    {% if object %}Editar{% else %}Novo{% endif %} {{ verbose_name }}
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <form method="post" class="card">
+            {% csrf_token %}
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fa-solid fa-pen-to-square me-2"></i> 
+                    {% if object %}Editar{% else %}Cadastrar{% endif %} {{ verbose_name }}
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for field in form %}
+                    <div class="col-12 mb-3">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="text-danger small">{{ field.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="card-footer text-end">
+                <a href="{{ url_listagem }}" class="btn btn-link">Cancelar</a>
+                
+                <button type="submit" class="btn btn-teal">
+                    <i class="fa-solid fa-check me-2"></i> Salvar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

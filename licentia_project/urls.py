@@ -15,6 +15,8 @@ urlpatterns = [
     
     # Rota do App Users (para futuras gestões de perfil)
     path('users/', include('users.urls')),
+
+    path('recursos/', include('licentia_resources.urls')),
 ]
 
 # Configuração para servir arquivos de mídia (imagens/PDFs dos recursos) em desenvolvimento

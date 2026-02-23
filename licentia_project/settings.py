@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'core.apps.CoreConfig',
+    'licentia_resources.apps.LicentiaResourcesConfig',
 ]
 
 MIDDLEWARE = [
