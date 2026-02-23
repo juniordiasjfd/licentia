@@ -1,9 +1,16 @@
-# licentia_resources/forms.py
 from django import forms
 
 class BaseResourceForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            # Adiciona a classe do Tabler em todos os inputs
-            field.widget.attrs['class'] = 'form-control'
+            # 1. Define a classe base do Tabler
+            css_classes = 'form-control'
+            
+            # 2. Verifica se este campo específico tem erros no formulário
+            # Usamos self.errors (do formulário) e não field.errors
+            if self.errors and field_name in self.errors:
+                css_classes += ' is-invalid'
+                
+            # 3. Atualiza os atributos do widget
+            field.widget.attrs.update({'class': css_classes})
