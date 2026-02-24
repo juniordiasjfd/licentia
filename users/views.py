@@ -1,12 +1,55 @@
 from django.urls import reverse_lazy
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import ListView
-from .forms import RegistroUsuarioForm, AtivacaoUsuarioForm
+from .forms import RegistroUsuarioForm, AtivacaoUsuarioForm, DepartamentoForm
 from django.contrib import messages
-from .models import User
+from .models import User, Departamento
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .mixins import CoordenadorRequiredMixin
 from django.views import View
+
+
+# Mixin para centralizar o contexto comum (DRY)
+class DepartamentoContextMixin:
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['verbose_name'] = self.model._meta.verbose_name
+        context['verbose_name_plural'] = self.model._meta.verbose_name_plural
+        context['model_name'] = self.model._meta.model_name
+        context['url_listagem'] = reverse_lazy('users:departamento_list')
+        return context
+
+# View de Listagem
+class DepartamentoListView(LoginRequiredMixin, DepartamentoContextMixin, ListView):
+    model = Departamento
+    template_name = 'users/users_list.html'
+    context_object_name = 'objetos'
+
+# View de Criação
+class DepartamentoCreateView(CoordenadorRequiredMixin, DepartamentoContextMixin, CreateView):
+    model = Departamento
+    form_class = DepartamentoForm
+    template_name = "users/users_form.html"
+    success_url = reverse_lazy("users:departamento_list")
+
+    def form_valid(self, form):
+        # Opcional: Se quiser registrar auditoria aqui também
+        form.instance.criado_por = self.request.user
+        messages.success(self.request, f"{self.model._meta.verbose_name} criado com sucesso!")
+        return super().form_valid(form)
+
+# View de Edição
+class DepartamentoUpdateView(CoordenadorRequiredMixin, DepartamentoContextMixin, UpdateView):
+    model = Departamento # Corrigido: era DepartamentoForm
+    form_class = DepartamentoForm
+    template_name = "users/users_form.html"
+    success_url = reverse_lazy("users:departamento_list")
+
+    def form_valid(self, form):
+        form.instance.atualizado_por = self.request.user
+        messages.success(self.request, f"{self.model._meta.verbose_name} atualizado com sucesso!")
+        return super().form_valid(form)
 
 class RegistroView(CreateView):
     form_class = RegistroUsuarioForm
@@ -48,7 +91,8 @@ class AtivarUsuarioView(CoordenadorRequiredMixin, View):
             user.is_active = True  # Ativa o usuário
             user.save()
             
-            # Limpa grupos anteriores (caso existam) e adiciona o novo
+            form.save_m2m() 
+            
             user.groups.clear()
             grupo_selecionado = form.cleaned_data['grupo']
             user.groups.add(grupo_selecionado)

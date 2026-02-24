@@ -1,0 +1,51 @@
+{% extends "core/base.html" %}
+
+{% block page_title %}
+    {{ verbose_name_plural }}
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="card-title">Lista de {{ verbose_name_plural }}</h3>
+        <a href="{% url 'users:'|add:model_name|add:'_create' %}" class="btn btn-teal">
+            <i class="fa-solid fa-plus me-2"></i> Novo {{ verbose_name }}
+        </a>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table card-table table-vcenter">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    {% if model_name == "projeto" %}
+                        <th>Editora</th>
+                        <th>Ciclo</th>
+                    {% endif %}
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in objetos %}
+                <tr>
+                    <td>{{ obj.nome }}</td>
+                    {% if model_name == "projeto" %}
+                        <td>{{ obj.editora }}</td>
+                        <td>{{ obj.ciclo }}</td>
+                    {% endif %}
+                    <td class="text-end">
+                        <a href="{% url 'users:'|add:model_name|add:'_update' obj.pk %}" class="btn btn-sm btn-light">
+                            <i class="fa-solid fa-edit me-1"></i> Editar
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-4">Nenhum registro encontrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

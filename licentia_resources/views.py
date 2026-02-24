@@ -1,13 +1,24 @@
 from django.views.generic import ListView, CreateView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .models import Componente, Projeto, StatusDoProcesso, StatusDoProcessoPagamento, StatusDoFreelaPagamento
+from . import models as resources_models
 from .forms import BaseResourceForm
 from django import forms
 from collections import OrderedDict
 
 
-class ResourceBaseView:
+class ResourceContextMixin:
+    """Mixin para centralizar os dados comuns de contexto para as views de Recursos."""
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Dados para o template saber qual modelo está manipulando
+        context['verbose_name'] = self.model._meta.verbose_name
+        context['verbose_name_plural'] = self.model._meta.verbose_name_plural
+        context['model_name'] = self.model._meta.model_name
+        # URL de cancelamento dinâmica
+        context['url_listagem'] = reverse_lazy(f'resources:{self.model._meta.model_name}_list')
+        return context
+class ResourceBaseCreateUpdateView(ResourceContextMixin):
     template_name = 'licentia_resources/resource_form.html'
     # form_class = BaseResourceForm # Usa o form base com estilo Tabler
 
@@ -85,56 +96,128 @@ class ResourceBaseView:
         # Gera a URL de listagem dinamicamente para o botão Cancelar
         context['url_listagem'] = reverse_lazy(f'resources:{self.model._meta.model_name}_list')
         return context
+class ResourceBaseListView(ResourceContextMixin, ListView):
+    template_name = 'licentia_resources/resource_list.html'
+    context_object_name = 'objetos'
 
 # --- COMPONENTE ---
-class ComponenteListView(ListView):
-    model = Componente
-    template_name = 'licentia_resources/resource_list.html'
-    context_object_name = 'objetos'
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['verbose_name'] = self.model._meta.verbose_name
-        context['verbose_name_plural'] = self.model._meta.verbose_name_plural
-        context['model_name'] = self.model._meta.model_name
-        return context
-class ComponenteCreateView(ResourceBaseView, CreateView):
-    model = Componente
-class ComponenteUpdateView(ResourceBaseView, UpdateView):
-    model = Componente
+class ComponenteListView(ResourceBaseListView):
+    model = resources_models.Componente
+class ComponenteCreateView(ResourceBaseCreateUpdateView, CreateView):
+    model = resources_models.Componente
+class ComponenteUpdateView(ResourceBaseCreateUpdateView, UpdateView):
+    model = resources_models.Componente
 
 # --- PROJETO ---
-class ProjetoListView(ListView):
-    model = Projeto
-    template_name = 'licentia_resources/resource_list.html'
-    context_object_name = 'objetos'
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['verbose_name'] = self.model._meta.verbose_name
-        context['verbose_name_plural'] = self.model._meta.verbose_name_plural
-        context['model_name'] = self.model._meta.model_name
-        return context
-class ProjetoCreateView(ResourceBaseView, CreateView):
-    model = Projeto
-class ProjetoUpdateView(ResourceBaseView, UpdateView):
-    model = Projeto
+class ProjetoListView(ResourceBaseListView):
+    model = resources_models.Projeto
+class ProjetoCreateView(ResourceBaseCreateUpdateView, CreateView):
+    model = resources_models.Projeto
+class ProjetoUpdateView(ResourceBaseCreateUpdateView, UpdateView):
+    model = resources_models.Projeto
 
 # --- STATUSDOPROCESSO ---
-class StatusDoProcessoListView(ListView):
-    model = StatusDoProcesso
-    template_name = 'licentia_resources/resource_list.html'
-    context_object_name = 'objetos'
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['verbose_name'] = self.model._meta.verbose_name
-        context['verbose_name_plural'] = self.model._meta.verbose_name_plural
-        context['model_name'] = self.model._meta.model_name
-        return context
-class StatusDoProcessoCreateView(ResourceBaseView, CreateView):
-    model = StatusDoProcesso
-class StatusDoProcessoUpdateView(ResourceBaseView, UpdateView):
-    model = StatusDoProcesso
+class StatusDoProcessoListView(ResourceBaseListView):
+    model = resources_models.StatusDoProcesso
+class StatusDoProcessoCreateView(ResourceBaseCreateUpdateView, CreateView):
+    model = resources_models.StatusDoProcesso
+class StatusDoProcessoUpdateView(ResourceBaseCreateUpdateView, UpdateView):
+    model = resources_models.StatusDoProcesso
 
+# --- StatusDoOrcamento ---
+class StatusDoOrcamentoListView(ResourceBaseListView):
+    model = resources_models.StatusDoOrcamento
+class StatusDoOrcamentoCreateView(ResourceBaseCreateUpdateView, CreateView):
+    model = resources_models.StatusDoOrcamento
+class StatusDoOrcamentoUpdateView(ResourceBaseCreateUpdateView, UpdateView):
+    model = resources_models.StatusDoOrcamento
 
+# --- StatusDoOrcamentoAprovacao ---
+class StatusDoOrcamentoAprovacaoListView(ResourceBaseListView):
+    model = resources_models.StatusDoOrcamentoAprovacao
+class StatusDoOrcamentoAprovacaoCreateView(ResourceBaseCreateUpdateView, CreateView):
+    model = resources_models.StatusDoOrcamentoAprovacao
+class StatusDoOrcamentoAprovacaoUpdateView(ResourceBaseCreateUpdateView, UpdateView):
+    model = resources_models.StatusDoOrcamentoAprovacao
 
+# --- StatusDoProcessoPagamentoFornecedor ---
+class StatusDoProcessoPagamentoFornecedorListView(ResourceBaseListView):
+    model = resources_models.StatusDoProcessoPagamentoFornecedor
+class StatusDoProcessoPagamentoFornecedorCreateView(ResourceBaseCreateUpdateView, CreateView):
+    model = resources_models.StatusDoProcessoPagamentoFornecedor
+class StatusDoProcessoPagamentoFornecedorUpdateView(ResourceBaseCreateUpdateView, UpdateView):
+    model = resources_models.StatusDoProcessoPagamentoFornecedor
+
+# --- StatusDoFreelaPagamento ---
+class StatusDoFreelaPagamentoListView(ResourceBaseListView):
+    model = resources_models.StatusDoFreelaPagamento
+class StatusDoFreelaPagamentoCreateView(ResourceBaseCreateUpdateView, CreateView):
+    model = resources_models.StatusDoFreelaPagamento
+class StatusDoFreelaPagamentoUpdateView(ResourceBaseCreateUpdateView, UpdateView):
+    model = resources_models.StatusDoFreelaPagamento
+
+# --- StatusAnaliseEditorial ---
+class StatusAnaliseEditorialListView(ResourceBaseListView):
+    model = resources_models.StatusAnaliseEditorial
+class StatusAnaliseEditorialCreateView(ResourceBaseCreateUpdateView, CreateView):
+    model = resources_models.StatusAnaliseEditorial
+class StatusAnaliseEditorialUpdateView(ResourceBaseCreateUpdateView, UpdateView):
+    model = resources_models.StatusAnaliseEditorial
+
+# --- StatusAnaliseAutRec ---
+class StatusAnaliseAutRecListView(ResourceBaseListView):
+    model = resources_models.StatusAnaliseAutRec
+class StatusAnaliseAutRecCreateView(ResourceBaseCreateUpdateView, CreateView):
+    model = resources_models.StatusAnaliseAutRec
+class StatusAnaliseAutRecUpdateView(ResourceBaseCreateUpdateView, UpdateView):
+    model = resources_models.StatusAnaliseAutRec
+
+# --- LocalizacaoDoRecurso ---
+class LocalizacaoDoRecursoListView(ResourceBaseListView):
+    model = resources_models.LocalizacaoDoRecurso
+class LocalizacaoDoRecursoCreateView(ResourceBaseCreateUpdateView, CreateView):
+    model = resources_models.LocalizacaoDoRecurso
+class LocalizacaoDoRecursoUpdateView(ResourceBaseCreateUpdateView, UpdateView):
+    model = resources_models.LocalizacaoDoRecurso
+
+# --- Fornecedor ---
+class FornecedorListView(ResourceBaseListView):
+    model = resources_models.Fornecedor
+class FornecedorCreateView(ResourceBaseCreateUpdateView, CreateView):
+    model = resources_models.Fornecedor
+class FornecedorUpdateView(ResourceBaseCreateUpdateView, UpdateView):
+    model = resources_models.Fornecedor
+
+# --- Empresa ---
+class EmpresaListView(ResourceBaseListView):
+    model = resources_models.Empresa
+class EmpresaCreateView(ResourceBaseCreateUpdateView, CreateView):
+    model = resources_models.Empresa
+class EmpresaUpdateView(ResourceBaseCreateUpdateView, UpdateView):
+    model = resources_models.Empresa
+
+# --- CentroDeCusto ---
+class CentroDeCustoListView(ResourceBaseListView):
+    model = resources_models.CentroDeCusto
+class CentroDeCustoCreateView(ResourceBaseCreateUpdateView, CreateView):
+    model = resources_models.CentroDeCusto
+class CentroDeCustoUpdateView(ResourceBaseCreateUpdateView, UpdateView):
+    model = resources_models.CentroDeCusto
+
+# --- TipoDeTermo ---
+class TipoDeTermoListView(ResourceBaseListView):
+    model = resources_models.TipoDeTermo
+class TipoDeTermoCreateView(ResourceBaseCreateUpdateView, CreateView):
+    model = resources_models.TipoDeTermo
+class TipoDeTermoUpdateView(ResourceBaseCreateUpdateView, UpdateView):
+    model = resources_models.TipoDeTermo
+
+# --- LimitacaoEdicao ---
+class LimitacaoEdicaoListView(ResourceBaseListView):
+    model = resources_models.LimitacaoEdicao
+class LimitacaoEdicaoCreateView(ResourceBaseCreateUpdateView, CreateView):
+    model = resources_models.LimitacaoEdicao
+class LimitacaoEdicaoUpdateView(ResourceBaseCreateUpdateView, UpdateView):
+    model = resources_models.LimitacaoEdicao
 
 

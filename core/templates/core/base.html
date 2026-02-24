@@ -117,10 +117,11 @@
                   <span class="nav-link-title">Recursos</span>
                 </a>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="{% url 'resources:projeto_list' %}">Lista de projetos</a>
-                  <a class="dropdown-item" href="{% url 'resources:componente_list' %}">Lista de componentes</a>
-                  <a class="dropdown-item" href="{% url 'resources:statusdoprocesso_list' %}">Lista de status do
-                    processo</a>
+                  {% for recurso in menu_recursos %}
+                  <a class="dropdown-item" href="{% url recurso.url_name %}">
+                    {{ recurso.nome_exibicao }}
+                  </a>
+                  {% endfor %}
                 </div>
               </li>
 
@@ -134,6 +135,9 @@
                 <div class="dropdown-menu">
                   <a class="dropdown-item" href="{% url 'users:gerenciar' %}">
                     <i class="fa-solid fa-users-gear me-2"></i> Gerenciar usuários
+                  </a>
+                  <a class="dropdown-item" href="{% url 'users:departamento_list' %}">
+                    <i class="fa-solid fa-users-gear me-2"></i> Departamentos
                   </a>
                 </div>
               </li>

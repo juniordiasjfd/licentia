@@ -23,6 +23,7 @@
                     <th>Usuário</th>
                     <th><i class="fa-solid fa-id-card me-1"></i> Nome</th>
                     <th><i class="fa-solid fa-envelope me-1"></i> E-mail</th>
+                    <th>Departamentos</th>
                     <th><i class="fa-solid fa-calendar-day me-1"></i> Data de criação</th>
                     <th>Status</th>
                     <th class="text-end">Ações</th>
@@ -35,6 +36,7 @@
                     <td class="fw-bold">{{ usuario.username }}</td>
                     <td>{{ usuario.get_full_name|default:"-" }}</td>
                     <td>{{ usuario.email }}</td>
+                    <td>{{ usuario.departamentos.all|join:", "|default:"-" }}</td>
                     <td>{{ usuario.date_joined|date:"d/m/Y" }}</td>
                     <td>
                         {% if usuario.is_active %}

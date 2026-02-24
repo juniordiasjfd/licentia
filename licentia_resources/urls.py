@@ -1,26 +1,37 @@
 from django.urls import path
 from . import views
+import re
 
 app_name = 'resources'
 
-urlpatterns = [
-    # Projetos
-    path('projetos/', views.ProjetoListView.as_view(), name='projeto_list'),
-    path('projetos/novo/', views.ProjetoCreateView.as_view(), name='projeto_create'),
-    path('projetos/<int:pk>/editar/', views.ProjetoUpdateView.as_view(), name='projeto_update'),
-
-    # Componentes
-    path('componentes/', views.ComponenteListView.as_view(), name='componente_list'),
-    path('componentes/novo/', views.ComponenteCreateView.as_view(), name='componente_create'),
-    path('componentes/<int:pk>/editar/', views.ComponenteUpdateView.as_view(), name='componente_update'),
-
-    # Status do Processo
-    path('status-processo/', views.StatusDoProcessoListView.as_view(), name='statusdoprocesso_list'),
-    path('status-processo/novo/', views.StatusDoProcessoCreateView.as_view(), name='statusdoprocesso_create'),
-    path('status-processo/<int:pk>/editar/', views.StatusDoProcessoUpdateView.as_view(), name='statusdoprocesso_update'),
-
-#     # Status Pagamento Freela
-#     path('status-pagamento-freela/', views.StatusPagamentoFreelaListView.as_view(), name='status_pagamento_freela_list'),
-#     path('status-pagamento-freela/novo/', views.StatusPagamentoFreelaCreateView.as_view(), name='status_pagamento_freela_create'),
-#     path('status-pagamento-freela/<int:pk>/editar/', views.StatusPagamentoFreelaUpdateView.as_view(), name='status_pagamento_freela_update'),
+# Lista de modelos que seguem o padrão List/Create/Update
+modelos_recursos = [
+    'Projeto', 'Componente', 'StatusDoProcesso', 'StatusDoOrcamento',
+    'StatusDoOrcamentoAprovacao', 'StatusDoProcessoPagamentoFornecedor',
+    'StatusDoFreelaPagamento', 'StatusAnaliseEditorial', 'StatusAnaliseAutRec',
+    'LocalizacaoDoRecurso', 'Fornecedor', 'Empresa', 'CentroDeCusto',
+    'TipoDeTermo', 'LimitacaoEdicao'
 ]
+
+urlpatterns = []
+
+for modelo in modelos_recursos:
+    # 1. model_name_lower: Nome técnico usado internamente (ex: statusdoorcamentoaprovacao)
+    # Importante para o 'name=' da URL ser compatível com seu context_processor
+    model_internal_name = modelo.lower()
+    
+    # 2. url_path: Nome amigável para o navegador (ex: status-orcamento-aprovacao)
+    # Aqui transformamos CamelCase em kebab-case
+    url_path = re.sub(r'(?<!^)(?=[A-Z])', '-', modelo).lower()
+
+    # Busca as classes de view dinamicamente
+    list_view = getattr(views, f'{modelo}ListView')
+    create_view = getattr(views, f'{modelo}CreateView')
+    update_view = getattr(views, f'{modelo}UpdateView')
+
+    urlpatterns += [
+        path(f'{url_path}/', list_view.as_view(), name=f'{model_internal_name}_list'),
+        path(f'{url_path}/novo/', create_view.as_view(), name=f'{model_internal_name}_create'),
+        path(f'{url_path}/<int:pk>/editar/', update_view.as_view(), name=f'{model_internal_name}_update'),
+    ]
+

@@ -10,10 +10,10 @@
             <div class="card-body">
                 <h3 class="card-title">Configurações para {{ usuario_pendente.get_full_name|default:usuario_pendente.username }}</h3>
                 <p class="text-muted">Defina o nível de acesso e a alocação antes de liberar a entrada no sistema.</p>
-                
+
                 <form method="post" novalidate>
                     {% csrf_token %}
-                    
+
                     <div class="mb-3">
                         <label class="form-label">Nível de acesso (Grupo)</label>
                         {{ form.grupo }}
@@ -27,7 +27,11 @@
 
                     <div class="mb-3">
                         <label class="form-label">Departamento</label>
-                        {{ form.departamento }}
+                        {{ form.departamentos }}
+                        {% if form.departamentos.errors %}
+                        <div class="invalid-feedback d-block">{{ form.departamentos.errors }}</div>
+                        {% endif %}
+                        <small class="form-hint">Mantenha pressionado 'Ctrl' para selecionar mais de um.</small>
                     </div>
 
                     <div class="form-footer d-flex justify-content-between">
