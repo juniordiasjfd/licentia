@@ -5,6 +5,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path("ckeditor5/", include('django_ckeditor_5.urls')),
     
     # Rotas de Autenticação (login, logout, password_reset)
     # O Django buscará os templates em templates/registration/
@@ -17,6 +19,8 @@ urlpatterns = [
     path('users/', include('users.urls')),
 
     path('recursos/', include('licentia_resources.urls')),
+
+    path('processos/', include('licentia_process.urls')),
 ]
 
 # Configuração para servir arquivos de mídia (imagens/PDFs dos recursos) em desenvolvimento

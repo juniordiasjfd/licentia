@@ -41,8 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django_ckeditor_5',
+
     'core.apps.CoreConfig',
     'licentia_resources.apps.LicentiaResourcesConfig',
+    'licentia_process.apps.LicentiaProcessConfig',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +56,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'simple_history.middleware.HistoryRequestMiddleware',
 ]
 
 ROOT_URLCONF = 'licentia_project.urls'
@@ -145,3 +150,52 @@ LOGIN_URL = 'login'
 # Exibe o e-mail de recuperação no terminal do VS Code/Console
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
+
+CKEDITOR_5_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+
+CKEDITOR_5_CONFIGS = {
+    'default': {
+        'plugins': [
+            'SourceEditing', 'HtmlEmbed', 'GeneralHtmlSupport',
+            'Essentials', 'Paragraph', 'Bold', 'Italic', 'Heading', 'List',
+            'Style', 'RemoveFormat',
+        ],
+        'language': 'pt-br',
+        'toolbar': [
+            'style', 'removeFormat', '|', 
+            'htmlEmbed', 'sourceEditing', '|', 
+            'bold', 'italic', '|', 'bulletedList', 'numberedList', '|', 
+            'undo', 'redo'
+        ],
+        'style': {
+            'definitions': [
+                {'name': 'c3idioma', 'element': 'span', 'classes': ['c3idioma']},
+                {'name': 'c3idiomabold', 'element': 'span', 'classes': ['c3idiomabold']},
+                {'name': 'c3idiomaitalico', 'element': 'span', 'classes': ['c3idiomaitalico']},
+                {'name': 'c3idiomabolditalico', 'element': 'span', 'classes': ['c3idiomabolditalico']},
+                {'name': 'equacao_latex', 'element': 'span', 'classes': ['latex']},
+            ]
+        },
+        'htmlEmbed': {
+            'showPreviews': True,
+        },
+        'htmlSupport': {
+            'allow': [
+                {
+                    'name': '\w+',
+                    'attributes': True,
+                    'classes': True,
+                    'styles': True
+                }
+            ]
+        },
+        'extends': {
+            'language': 'pt-br',
+        },
+        'editorConfig': {
+            'browserSpellcheck': True,
+        },
+    }
+}
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
