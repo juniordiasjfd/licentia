@@ -8,6 +8,7 @@
   <title>{% block title %}Licentia{% endblock %}</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
   <style>
     /* Aplicando o seu Verde-Água (Teal) como tom principal */
     :root {
@@ -69,7 +70,7 @@
 
         <h1 class="navbar-brand d-none-navbar-horizontal pe-0 pe-md-3">
           <a href="{% url 'core:home' %}" class="text-teal navbar-brand-title">
-            LICENTIA
+            Licentia
           </a>
         </h1>
 
@@ -105,8 +106,8 @@
                   <span class="nav-link-title">Processos</span>
                 </a>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="#">Novo processo</a>
-                  <a class="dropdown-item" href="#">Listar processos</a>
+                  <a class="dropdown-item" href="{% url 'process:process_create' %}">Novo processo</a>
+                  <a class="dropdown-item" href="{% url 'process:process_list' %}">Listar processos</a>
                 </div>
               </li>
 
@@ -169,7 +170,25 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/js/tabler.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
   <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Inicializa todos os elementos com a classe .tom-select
+        var elms = document.querySelectorAll('.tom-select');
+        elms.forEach(function(el) {
+            new TomSelect(el, {
+                copyClassesToDropdown: false,
+                dropdownParent: 'body',
+                controlInput: '<input>',
+                render:{
+                    item: function(data,escape) {
+                        return '<div>' + escape(data.text) + '</div>';
+                    }
+                }
+            });
+        });
+    });
+    
     // Faz os alertas sumirem sozinhos após 5 segundos
     document.addEventListener("DOMContentLoaded", function () {
       setTimeout(function () {

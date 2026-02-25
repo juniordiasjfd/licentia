@@ -42,7 +42,7 @@ class Process(AuditoriaBase):
     
     observacao_editorial = CKEditor5Field("Observação editorial", config_name='default', blank=True, null=True)
     credito_obrigatorio = CKEditor5Field("Crédito obrigatório", config_name='default', blank=True, null=True)
-    observacao_autrec = CKEditor5Field("Observação AutRev", config_name='default', blank=True, null=True)
+    observacao_autrec = CKEditor5Field("Observação AutRec", config_name='default', blank=True, null=True)
 
     solicitar_imagem = models.BooleanField('Solicitar imagem', default=False)
     enviar_formulario = models.BooleanField('Enviar formulário', default=False)

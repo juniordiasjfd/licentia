@@ -4,7 +4,6 @@
 
 {% block extra_css %}
 {{ form.media }}
-<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
 <style>
     .ck-editor__editable { min-height: 200px; }
     /* Ajuste para o Tom Select não ficar esmagado */
@@ -62,8 +61,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#tabs-detalhes" class="nav-link" data-bs-toggle="tab">
-                            <i class="fa-solid fa-file-lines me-2"></i> Detalhes e observações
+                        <a href="#tabs-termo-creditos" class="nav-link" data-bs-toggle="tab">
+                            <i class="fa-solid fa-file-lines me-2"></i> Termos e créditos
                         </a>
                     </li>
                     <li class="nav-item">
@@ -104,11 +103,11 @@
 
                     <div class="tab-pane" id="tabs-fluxo-autrec">
                         <div class="row">
-                            {% include "licentia_process/includes/form_field.html" with field=form.atribuido_a %}
+                            
                             {% include "licentia_process/includes/form_field.html" with field=form.status_analise_autrec %}
-                            
-
-                            
+                            {% include "licentia_process/includes/form_field.html" with field=form.solicitar_imagem %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.enviar_formulario %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.observacao_autrec %}
                         </div>
                     </div>
 
@@ -117,15 +116,28 @@
                             {% include "licentia_process/includes/form_field.html" with field=form.valor_do_processo %}
                             {% include "licentia_process/includes/form_field.html" with field=form.status_do_orcamento %}
                             {% include "licentia_process/includes/form_field.html" with field=form.status_do_orcamento_aprovacao %}
+                            {% include "licentia_process/includes/form_field.html"  %}
+
+                            {% include "licentia_process/includes/form_field.html" with field=form.atribuido_a %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.status_do_freela_pagamento %}
+
+
                             {% include "licentia_process/includes/form_field.html" with field=form.empresa %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.centro_de_custo %}
                         </div>
                     </div>
 
-                    <div class="tab-pane" id="tabs-detalhes">
+                    <div class="tab-pane" id="tabs-termo-creditos">
                         <div class="row">
-                            
-                            
+                            {% include "licentia_process/includes/form_field.html" with field=form.tipo_de_termo %}
                             {% include "licentia_process/includes/form_field.html" with field=form.credito_obrigatorio %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.observacao_exemplares %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.limitacao_anos %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.limitacao_edicao %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.limitacao_tiragem %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.limitacao_outros %}
+                            
+                            
                         </div>
                     </div>
 
@@ -258,24 +270,8 @@
 
 
 {% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Inicializa todos os elementos com a classe .tom-select
-        var elms = document.querySelectorAll('.tom-select');
-        elms.forEach(function(el) {
-            new TomSelect(el, {
-                copyClassesToDropdown: false,
-                dropdownParent: 'body',
-                controlInput: '<input>',
-                render:{
-                    item: function(data,escape) {
-                        return '<div>' + escape(data.text) + '</div>';
-                    }
-                }
-            });
-        });
-    });
+    
 
     document.addEventListener("DOMContentLoaded", function() {
     // Procura o primeiro campo com erro

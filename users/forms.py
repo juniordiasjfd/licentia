@@ -34,7 +34,7 @@ class AtivacaoUsuarioForm(forms.ModelForm):
         queryset=Departamento.objects.all(),
         required=False,
         widget=forms.SelectMultiple(attrs={
-            'class': 'form-select', 
+            'class': 'form-select tom-select', 
             'style': 'height: 150px;' # Altura para facilitar a visualização
         })
     )
