@@ -2,91 +2,250 @@
 
 {% block page_title %}{% if object %}Editar{% else %}Novo{% endif %} {{ verbose_name }}{% endblock %}
 
+{% block extra_css %}
+{{ form.media }}
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+<style>
+    .ck-editor__editable { min-height: 200px; }
+    /* Ajuste para o Tom Select não ficar esmagado */
+    .ts-control { border: 1px solid #dadcde; border-radius: 4px; }
+
+    .table td {
+    max-width: 320px;
+    word-break: break-word;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-lg-10">
         <form method="post" class="card shadow-sm" novalidate>
             {% csrf_token %}
-            
             <div class="card-status-top bg-teal"></div>
+
+            <div class="card-body border-bottom py-3 bg-light">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Retranca</label>
+                        {{ form.retranca }}
+                        {% if form.retranca.errors %}<div class="text-danger small">{{ form.retranca.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Status do Processo</label>
+                        {{ form.status_do_processo }}
+                        {% if form.status_do_processo.errors %}<div class="text-danger small">{{ form.status_do_processo.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+            </div>
             
             <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fa-solid fa-file-pen me-2 text-teal"></i>
-                    Informações do {{ verbose_name }}
-                </h3>
+                <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+                    <li class="nav-item">
+                        <a href="#tabs-identificacao" class="nav-link active" data-bs-toggle="tab">
+                            <i class="fa-solid fa-id-card me-2"></i> Identificação
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#tabs-fluxo-editorial" class="nav-link" data-bs-toggle="tab">
+                            <i class="fa-solid fa-arrows-spin me-2"></i> Fluxo Editorial
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#tabs-fluxo-autrec" class="nav-link" data-bs-toggle="tab">
+                            <i class="fa-solid fa-arrows-spin me-2"></i> Fluxo AutRec
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#tabs-financeiro" class="nav-link" data-bs-toggle="tab">
+                            <i class="fa-solid fa-money-bill-wave me-2"></i> Financeiro
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#tabs-detalhes" class="nav-link" data-bs-toggle="tab">
+                            <i class="fa-solid fa-file-lines me-2"></i> Detalhes e observações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#tabs-historico" class="nav-link" data-bs-toggle="tab">
+                            <i class="fa-solid fa-history me-2"></i> Histórico
+                        </a>
+                    </li>
+                </ul>
             </div>
 
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label required">Retranca</label>
-                            {{ form.retranca }}
-                            <div class="text-danger small">{{ form.retranca.errors }}</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-6 mb-3">
-                                <label class="form-label">Projeto</label>
-                                {{ form.projeto }}
-                            </div>
-                            <div class="col-6 mb-3">
-                                <label class="form-label">Componente</label>
-                                {{ form.componente }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">Valor (R$)</label>
-                            {{ form.valor_do_processo }}
-                        </div>
-                        <div class="row">
-                            <div class="col-6 mb-3">
-                                <label class="form-label">Data de Entrada</label>
-                                {{ form.data_entrada }}
-                            </div>
-                            <div class="col-6 mb-3">
-                                <label class="form-label">Status do Processo</label>
-                                {{ form.status_do_processo }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <hr class="my-4">
-
-                <div class="row">
-                    <div class="col-12 mb-3">
-                        <label class="form-label">Título ou Descrição</label>
-                        {{ form.titulo_descricao }}
-                    </div>
+                <div class="tab-content">
                     
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Volume</label>
-                        {{ form.volume }}
+                    <div class="tab-pane active show" id="tabs-identificacao">
+                        <div class="row">
+                            {% include "licentia_process/includes/form_field.html" with field=form.projeto %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.componente %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.volume %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.localizacao_do_recurso %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.unidade %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.capitulo_secao %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.pagina %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.titulo_descricao %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.fornecedor %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.obra_original %}
+                        </div>
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Página</label>
-                        {{ form.pagina }}
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Lote</label>
-                        {{ form.lote }}
-                    </div>
-                </div>
 
-                <div class="mb-3 mt-3">
-                    <label class="form-label">Observação Editorial</label>
-                    {{ form.observacao_editorial }}
+                    <div class="tab-pane" id="tabs-fluxo-editorial">
+                        <div class="row">
+                            {% include "licentia_process/includes/form_field.html" with field=form.data_entrada %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.lote %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.status_analise_editorial %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.codigo_biblioteca_link %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.observacao_editorial %}
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="tabs-fluxo-autrec">
+                        <div class="row">
+                            {% include "licentia_process/includes/form_field.html" with field=form.atribuido_a %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.status_analise_autrec %}
+                            
+
+                            
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="tabs-financeiro">
+                        <div class="row">
+                            {% include "licentia_process/includes/form_field.html" with field=form.valor_do_processo %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.status_do_orcamento %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.status_do_orcamento_aprovacao %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.empresa %}
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="tabs-detalhes">
+                        <div class="row">
+                            
+                            
+                            {% include "licentia_process/includes/form_field.html" with field=form.credito_obrigatorio %}
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="tabs-historico">
+                        <div class="table-responsive">
+                            <table class="table table-vcenter card-table">
+                                <thead>
+                                    <tr>
+                                        <th>Usuário</th>
+                                        <th>Data</th>
+                                        <th>Tipo</th>
+                                        <th>Campo</th>
+                                        <th>Valor antigo</th>
+                                        <th>Novo valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for record in historico_alteracoes %}
+                                    {% if record.lista_changes %}
+                                    {% for change in record.lista_changes %}
+                                    <tr>
+                                        <td>{{ record.history_user|default:"Sistema" }}</td>
+                                
+                                        <td>{{ record.history_date|date:"d/m/Y H:i" }}</td>
+                                
+                                        <td>
+                                            <span class="badge 
+                                                    {% if record.history_type == '+' %}bg-success
+                                                    {% elif record.history_type == '~' %}bg-warning
+                                                    {% else %}bg-danger{% endif %}">
+                                                {{ record.get_history_type_display }}
+                                            </span>
+                                        </td>
+                                
+                                        <td>{{ change.verbose|capfirst }}</td>
+                                
+                                        <!-- Valor antigo -->
+                                        <td>
+                                            {% with old_value=change.old|default:"-" %}
+                                            {{ old_value|striptags|truncatechars:80 }}
+                                
+                                            {% if old_value|length > 80 %}
+                                            <a href="#" data-bs-toggle="modal"
+                                                data-bs-target="#modal_old_{{ forloop.counter }}_{{ forloop.parentloop.counter }}">
+                                                ver mais
+                                            </a>
+                                
+                                            <!-- Modal valor antigo -->
+                                            <div class="modal fade" id="modal_old_{{ forloop.counter }}_{{ forloop.parentloop.counter }}" tabindex="-1">
+                                                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Valor antigo - {{ change.verbose|capfirst }}</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            {{ old_value|safe }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                            {% endwith %}
+                                        </td>
+                                
+                                        <!-- Valor novo -->
+                                        <td>
+                                            {% with new_value=change.new|default:"-" %}
+                                            {{ new_value|striptags|truncatechars:80 }}
+                                
+                                            {% if new_value|length > 80 %}
+                                            <a href="#" data-bs-toggle="modal"
+                                                data-bs-target="#modal_new_{{ forloop.counter }}_{{ forloop.parentloop.counter }}">
+                                                ver mais
+                                            </a>
+                                
+                                            <!-- Modal valor novo -->
+                                            <div class="modal fade" id="modal_new_{{ forloop.counter }}_{{ forloop.parentloop.counter }}" tabindex="-1">
+                                                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Novo valor - {{ change.verbose|capfirst }}</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            {{ new_value|safe }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                            {% endwith %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% else %}
+                                    <tr>
+                                        <td>{{ record.history_user|default:"Sistema" }}</td>
+                                        <td>{{ record.history_date|date:"d/m/Y H:i" }}</td>
+                                        <td><span class="badge bg-success">Criação</span></td>
+                                        <td colspan="3" class="text-muted">Registro inicial</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">
+                                            Nenhuma alteração registrada.
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
             <div class="card-footer d-flex justify-content-between">
-                <a href="{{ url_listagem }}" class="btn btn-link link-secondary">
-                    Cancelar
-                </a>
+                <a href="{{ url_listagem }}" class="btn btn-link link-secondary">Cancelar</a>
                 <button type="submit" class="btn btn-teal">
                     <i class="fa-solid fa-save me-2"></i> Salvar {{ verbose_name }}
                 </button>
@@ -96,10 +255,42 @@
 </div>
 {% endblock %}
 
-{% block extra_css %}
-{{ form.media }}
-<style>
-    /* Ajuste para o CKEditor caber no card */
-    .ck-editor__editable { min-height: 200px; }
-</style>
+
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Inicializa todos os elementos com a classe .tom-select
+        var elms = document.querySelectorAll('.tom-select');
+        elms.forEach(function(el) {
+            new TomSelect(el, {
+                copyClassesToDropdown: false,
+                dropdownParent: 'body',
+                controlInput: '<input>',
+                render:{
+                    item: function(data,escape) {
+                        return '<div>' + escape(data.text) + '</div>';
+                    }
+                }
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+    // Procura o primeiro campo com erro
+    var firstError = document.querySelector('.text-danger');
+    if (firstError) {
+        // Encontra a aba (tab-pane) pai desse erro
+        var pane = firstError.closest('.tab-pane');
+        if (pane) {
+            // Ativa o link da aba correspondente
+            var id = pane.getAttribute('id');
+            var tabLink = document.querySelector('a[href="#' + id + '"]');
+            var bsTab = new bootstrap.Tab(tabLink);
+            bsTab.show();
+        }
+    }
+});
+</script>
 {% endblock %}

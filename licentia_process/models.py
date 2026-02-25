@@ -6,6 +6,14 @@ from users import models as users_models
 from simple_history.models import HistoricalRecords
 
 
+def get_default_status_orcamento_aprovacao():
+    from licentia_resources.models import StatusDoOrcamentoAprovacao
+    status = StatusDoOrcamentoAprovacao.objects.filter(nome__icontains='PEND').first()
+    return status.id if status else None
+def get_default_status_orcamento():
+    from licentia_resources.models import StatusDoOrcamento
+    status = StatusDoOrcamento.objects.filter(nome__icontains='PEND').first()
+    return status.id if status else None
 class Process(AuditoriaBase):
     volume = models.PositiveIntegerField('Volume', blank=True, null=True)
     pagina = models.PositiveIntegerField('Página', blank=True, null=True)
@@ -23,7 +31,7 @@ class Process(AuditoriaBase):
     )
 
     retranca = models.CharField('Retranca', max_length=100, unique=True)
-    capitulo_secao = models.CharField('Capítulo ou seção', max_length=100)
+    capitulo_secao = models.CharField('Capítulo ou seção', max_length=100, blank=True, null=True)
     titulo_descricao = models.CharField('Título ou descrição', max_length=200, blank=True, null=True)
     solicitado_para = models.CharField('Solicitado para', max_length=200, blank=True, null=True)
     
@@ -32,9 +40,9 @@ class Process(AuditoriaBase):
     observacao_exemplares = models.TextField('Observação exemplares', max_length=1000, blank=True, null=True)
     limitacao_outros = models.TextField('Limitação (outros)', max_length=1000, blank=True, null=True)
     
-    observacao_editorial = CKEditor5Field("Observação editorial", config_name='default')
-    credito_obrigatorio = CKEditor5Field("Crédito obrigatório", config_name='default')
-    observacao_autrec = CKEditor5Field("Observação AutRev", config_name='default')
+    observacao_editorial = CKEditor5Field("Observação editorial", config_name='default', blank=True, null=True)
+    credito_obrigatorio = CKEditor5Field("Crédito obrigatório", config_name='default', blank=True, null=True)
+    observacao_autrec = CKEditor5Field("Observação AutRev", config_name='default', blank=True, null=True)
 
     solicitar_imagem = models.BooleanField('Solicitar imagem', default=False)
     enviar_formulario = models.BooleanField('Enviar formulário', default=False)
@@ -77,6 +85,7 @@ class Process(AuditoriaBase):
     status_do_orcamento = models.ForeignKey(
         resources_models.StatusDoOrcamento, 
         on_delete=models.PROTECT,
+        default=get_default_status_orcamento,
         null=True,
         blank=True,
         related_name="%(class)s_status_orcamento",
@@ -85,6 +94,7 @@ class Process(AuditoriaBase):
     status_do_orcamento_aprovacao = models.ForeignKey(
         resources_models.StatusDoOrcamentoAprovacao, 
         on_delete=models.PROTECT,
+        default=get_default_status_orcamento_aprovacao,
         null=True,
         blank=True,
         related_name="%(class)s_status_orcamento_aprovacao",
@@ -169,7 +179,20 @@ class Process(AuditoriaBase):
         related_name="%(class)s_atribuicoes",
         help_text='Marque os usuários atribuídos.')
     
-    history = HistoricalRecords()
+    history = HistoricalRecords(custom_model_name='HistoricalProcess')
+
+    @property
+    def lista_mudancas(self):
+        # Este método será usado no template
+        return self.get_lista_mudancas()
+
+    def get_lista_mudancas(self):
+        # Lógica para ser usada via objeto de histórico ou objeto real
+        if hasattr(self, 'prev_record') and self.prev_record:
+            delta = self.diff_against(self.prev_record)
+            # Retorna os nomes dos campos alterados
+            return ", ".join(delta.changed_fields)
+        return ""
 
     class Meta:
         verbose_name = 'Processo'

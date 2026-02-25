@@ -31,14 +31,79 @@ class ProcessCreateView(ProcessContextMixin, CreateView):
         form.instance.criado_por = self.request.user
         messages.success(self.request, "Novo processo registrado com sucesso!")
         return super().form_valid(form)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['historico_alteracoes'] = []
+        return context
 
 class ProcessUpdateView(ProcessContextMixin, UpdateView):
     model = Process
     form_class = ProcessForm
-    template_name = 'process/process_form.html'
+    template_name = 'licentia_process/process_form.html'
     success_url = reverse_lazy('process:process_list')
 
     def form_valid(self, form):
         form.instance.atualizado_por = self.request.user
         messages.success(self.request, f"Processo {self.object.retranca} atualizado!")
         return super().form_valid(form)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        records = self.object.history.all().order_by('-history_date')
+        CAMPOS_EXCLUIDOS = ["criado_por", "atualizado_por"]
+
+        historico = []
+
+        for record in records:
+            if record.prev_record:
+                delta = record.diff_against(record.prev_record)
+
+                lista = []
+                for change in delta.changes:
+                     # ignora campos indesejados
+                    if change.field in CAMPOS_EXCLUIDOS:
+                        continue
+
+                    try:
+                        field = self.model._meta.get_field(change.field)
+                        verbose = field.verbose_name
+                    except Exception:
+                        field = None
+                        verbose = change.field
+
+                    old_value = change.old
+                    new_value = change.new
+
+                    # ----------------------------
+                    # Converter FK pk -> objeto
+                    # ----------------------------
+                    if field and field.is_relation and field.many_to_one:
+                        model_fk = field.related_model
+
+                        if old_value:
+                            try:
+                                old_value = model_fk.objects.get(pk=old_value)
+                            except model_fk.DoesNotExist:
+                                pass
+
+                        if new_value:
+                            try:
+                                new_value = model_fk.objects.get(pk=new_value)
+                            except model_fk.DoesNotExist:
+                                pass
+
+                    lista.append({
+                        "field": change.field,
+                        "verbose": verbose,
+                        "old": old_value,
+                        "new": new_value,
+                    })
+
+                record.lista_changes = lista
+            else:
+                record.lista_changes = []
+
+            historico.append(record)
+
+        context["historico_alteracoes"] = historico
+        return context
