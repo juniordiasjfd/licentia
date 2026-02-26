@@ -163,97 +163,103 @@
                                 </thead>
                                 <tbody>
                                     {% for record in historico_alteracoes %}
-                                    {% if record.lista_changes %}
-                                    {% for change in record.lista_changes %}
-                                    <tr>
-                                        <td>{{ record.history_user|default:"Sistema" }}</td>
-                                
-                                        <td>{{ record.history_date|date:"d/m/Y H:i" }}</td>
-                                
-                                        <td>
-                                            <span class="badge 
-                                                    {% if record.history_type == '+' %}bg-success
-                                                    {% elif record.history_type == '~' %}bg-warning
-                                                    {% else %}bg-danger{% endif %}">
-                                                {{ record.get_history_type_display }}
-                                            </span>
-                                        </td>
-                                
-                                        <td>{{ change.verbose|capfirst }}</td>
-                                
-                                        <!-- Valor antigo -->
-                                        <td>
-                                            {% with old_value=change.old|default:"-" %}
-                                            {{ old_value|striptags|truncatechars:80 }}
-                                
-                                            {% if old_value|length > 80 %}
-                                            <a href="#" data-bs-toggle="modal"
-                                                data-bs-target="#modal_old_{{ forloop.counter }}_{{ forloop.parentloop.counter }}">
-                                                ver mais
-                                            </a>
-                                
-                                            <!-- Modal valor antigo -->
-                                            <div class="modal fade" id="modal_old_{{ forloop.counter }}_{{ forloop.parentloop.counter }}" tabindex="-1">
-                                                <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title">Valor antigo - {{ change.verbose|capfirst }}</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            {{ old_value|safe }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {% endif %}
-                                            {% endwith %}
-                                        </td>
-                                
-                                        <!-- Valor novo -->
-                                        <td>
-                                            {% with new_value=change.new|default:"-" %}
-                                            {{ new_value|striptags|truncatechars:80 }}
-                                
-                                            {% if new_value|length > 80 %}
-                                            <a href="#" data-bs-toggle="modal"
-                                                data-bs-target="#modal_new_{{ forloop.counter }}_{{ forloop.parentloop.counter }}">
-                                                ver mais
-                                            </a>
-                                
-                                            <!-- Modal valor novo -->
-                                            <div class="modal fade" id="modal_new_{{ forloop.counter }}_{{ forloop.parentloop.counter }}" tabindex="-1">
-                                                <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title">Novo valor - {{ change.verbose|capfirst }}</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            {{ new_value|safe }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {% endif %}
-                                            {% endwith %}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                    {% else %}
-                                    <tr>
-                                        <td>{{ record.history_user|default:"Sistema" }}</td>
-                                        <td>{{ record.history_date|date:"d/m/Y H:i" }}</td>
-                                        <td><span class="badge bg-success">Criação</span></td>
-                                        <td colspan="3" class="text-muted">Registro inicial</td>
-                                    </tr>
-                                    {% endif %}
-                                    {% empty %}
-                                    <tr>
-                                        <td colspan="6" class="text-center text-muted">
-                                            Nenhuma alteração registrada.
-                                        </td>
-                                    </tr>
+                                        {% if record.lista_changes %}
+                                            {% for change in record.lista_changes %}
+                                            <tr>
+                                                <td>{{ record.history_user|default:"Sistema" }}</td>
+                                        
+                                                <td>{{ record.history_date|date:"d/m/Y H:i" }}</td>
+                                        
+                                                <td>
+                                                    <span class="badge 
+                                                            {% if record.history_type == '+' %}bg-success
+                                                            {% elif record.history_type == '~' %}bg-warning
+                                                            {% else %}bg-danger{% endif %}">
+                                                        {{ record.get_history_type_display }}
+                                                    </span>
+                                                </td>
+                                        
+                                                <td>{{ change.verbose|capfirst }}</td>
+                                        
+                                                <td>
+                                                    {% with old_value=change.old %}
+                                                        {# Exibição na tabela: Traduz se for booleano, senão trunca o texto #}
+                                                        {% if old_value is True or old_value is False %}
+                                                            {{ old_value|yesno:"Sim,Não" }}
+                                                        {% else %}
+                                                            {{ old_value|default:"-"|striptags|truncatechars:80 }}
+                                                        {% endif %}
+                                                
+                                                        {% if old_value|stringformat:"s"|length > 80 %}
+                                                            <a href="#" data-bs-toggle="modal"
+                                                                data-bs-target="#modal_old_{{ forloop.counter }}_{{ forloop.parentloop.counter }}">
+                                                                ver mais
+                                                            </a>
+                                                
+                                                            <div class="modal fade" id="modal_old_{{ forloop.counter }}_{{ forloop.parentloop.counter }}" tabindex="-1">
+                                                                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title">Valor antigo - {{ change.verbose|capfirst }}</h5>
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            {{ old_value|safe }}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endwith %}
+                                                </td>
+                                                
+                                                <td>
+                                                    {% with new_value=change.new %}
+                                                        {# Exibição na tabela: Traduz se for booleano, senão trunca o texto #}
+                                                        {% if new_value is True or new_value is False %}
+                                                            {{ new_value|yesno:"Sim,Não" }}
+                                                        {% else %}
+                                                            {{ new_value|default:"-"|striptags|truncatechars:80 }}
+                                                        {% endif %}
+                                                
+                                                        {% if new_value|stringformat:"s"|length > 80 %}
+                                                            <a href="#" data-bs-toggle="modal"
+                                                                data-bs-target="#modal_new_{{ forloop.counter }}_{{ forloop.parentloop.counter }}">
+                                                                ver mais
+                                                            </a>
+                                                
+                                                            <div class="modal fade" id="modal_new_{{ forloop.counter }}_{{ forloop.parentloop.counter }}" tabindex="-1">
+                                                                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title">Novo valor - {{ change.verbose|capfirst }}</h5>
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            {{ new_value|safe }}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endwith %}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td>{{ record.history_user|default:"Sistema" }}</td>
+                                                <td>{{ record.history_date|date:"d/m/Y H:i" }}</td>
+                                                <td><span class="badge bg-success">Criação</span></td>
+                                                <td colspan="3" class="text-muted">Registro inicial</td>
+                                            </tr>
+                                        {% endif %}
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted">
+                                                Nenhuma alteração registrada.
+                                            </td>
+                                        </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
