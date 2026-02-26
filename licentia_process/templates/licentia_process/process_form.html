@@ -163,7 +163,15 @@
                                 </thead>
                                 <tbody>
                                     {% for record in historico_alteracoes %}
-                                        {% if record.lista_changes %}
+                                        {% if record.history_type == '+' %}
+                                            {# Linha exclusiva para o nascimento do processo #}
+                                            <tr>
+                                                <td>{{ record.history_user|default:"Sistema" }}</td>
+                                                <td>{{ record.history_date|date:"d/m/Y H:i" }}</td>
+                                                <td><span class="badge bg-success">Criação</span></td>
+                                                <td colspan="3" class="text-muted">Registro inicial do processo</td>
+                                            </tr>
+                                        {% else %}
                                             {% for change in record.lista_changes %}
                                             <tr>
                                                 <td>{{ record.history_user|default:"Sistema" }}</td>
@@ -246,13 +254,7 @@
                                                 </td>
                                             </tr>
                                             {% endfor %}
-                                        {% else %}
-                                            <tr>
-                                                <td>{{ record.history_user|default:"Sistema" }}</td>
-                                                <td>{{ record.history_date|date:"d/m/Y H:i" }}</td>
-                                                <td><span class="badge bg-success">Criação</span></td>
-                                                <td colspan="3" class="text-muted">Registro inicial</td>
-                                            </tr>
+                                        
                                         {% endif %}
                                         {% empty %}
                                         <tr>
