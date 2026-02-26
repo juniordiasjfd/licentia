@@ -46,6 +46,29 @@ class ProcessUpdateView(ProcessContextMixin, UpdateView):
     success_url = reverse_lazy('process:process_list')
 
     def form_valid(self, form):
+        # Pega os usuários antes da alteração
+        old_assignees = set(self.object.atribuido_a.all())
+
+        response = super().form_valid(form)
+
+        # Pega os usuários depois da alteração
+        new_assignees = set(self.object.atribuido_a.all())
+
+        if old_assignees != new_assignees:
+            adicionados = [u.get_full_name() or u.username for u in (new_assignees - old_assignees)]
+            removidos = [u.get_full_name() or u.username for u in (old_assignees - new_assignees)]
+            
+            msg = []
+            if adicionados: msg.append(f"Atribuído a: {', '.join(adicionados)}")
+            if removidos: msg.append(f"Removido de: {', '.join(removidos)}")
+            
+            # Cria um registro no Diário de Bordo automaticamente
+            ProcessLog.objects.create(
+                processo=self.object,
+                usuario=self.request.user,
+                texto=f"Alteração de atribuição: {'; '.join(msg)}"
+            )
+
         form.instance.atualizado_por = self.request.user
         messages.success(self.request, f"Processo {self.object.retranca} atualizado!")
         return super().form_valid(form)
