@@ -15,30 +15,32 @@
 }
 
 
-/* Botão Flutuante Estratégico */
+/* Botão Salvar e Permanecer - Fixo no Rodapé */
 .btn-save-sticky {
     position: fixed;
-    top: 85px; /* Ajuste este valor dependendo da altura da sua navbar */
-    right: 25px;
-    z-index: 1030; /* Acima de quase tudo, mas abaixo de modais */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    border-radius: 50px; /* Estilo 'pill' para parecer um elemento flutuante */
-    padding: 10px 20px;
+    bottom: 90px; /* Distância do fundo */
+    right: 30px;  /* Distância da direita */
+    z-index: 1030;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    border-radius: 50px;
+    padding: 12px 25px;
     font-weight: 600;
     transition: all 0.2s ease-in-out;
+    border: 2px solid #fff; /* Pequena borda para destacar de fundos variados */
 }
 
 .btn-save-sticky:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-5px); /* Efeito de levante ao passar o mouse */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
-/* Esconde o botão em telas muito pequenas para não cobrir o conteúdo */
+/* Ajuste para telas pequenas */
 @media (max-width: 768px) {
     .btn-save-sticky {
-        bottom: 20px; /* No mobile, melhor ficar embaixo */
-        top: auto;
-        right: 15px;
+        right: 20px;
+        bottom: 90px;
+        padding: 10px 20px;
+        font-size: 0.9rem;
     }
 }
 </style>

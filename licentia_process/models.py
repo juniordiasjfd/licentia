@@ -14,6 +14,10 @@ def get_default_status_orcamento():
     from licentia_resources.models import StatusDoOrcamento
     status = StatusDoOrcamento.objects.filter(nome__icontains='PEND').first()
     return status.id if status else None
+def get_default_status_processo():
+    from licentia_resources.models import StatusDoProcesso
+    status = StatusDoProcesso.objects.filter(nome__icontains='PEND').first()
+    return status.id if status else None
 class Process(AuditoriaBase):
     volume = models.PositiveIntegerField('Volume', blank=True, null=True)
     pagina = models.PositiveIntegerField('Página', blank=True, null=True)
@@ -103,6 +107,7 @@ class Process(AuditoriaBase):
     status_do_processo = models.ForeignKey(
         resources_models.StatusDoProcesso, 
         on_delete=models.PROTECT,
+        default=get_default_status_processo,
         null=True,
         blank=True,
         related_name="%(class)s_status_do_processo",
@@ -159,16 +164,16 @@ class Process(AuditoriaBase):
     projeto = models.ForeignKey(
         resources_models.Projeto, 
         on_delete=models.PROTECT,
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         related_name="%(class)s_projeto",
         verbose_name="Projeto")
     
     componente = models.ForeignKey(
         resources_models.Componente, 
         on_delete=models.PROTECT,
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         related_name="%(class)s_componente",
         verbose_name="Componente")
 
