@@ -2,8 +2,11 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView
 from django.contrib import messages
-from .models import Process
+from .models import Process, ProcessLog
 from .forms import ProcessForm
+from django.http import JsonResponse
+from django.views import View
+
 
 class ProcessContextMixin:
     """Mixin para padronizar variáveis de template e URLs"""
@@ -107,3 +110,26 @@ class ProcessUpdateView(ProcessContextMixin, UpdateView):
 
         context["historico_alteracoes"] = historico
         return context
+
+class SaveProcessLogView(View):
+    def post(self, request, *args, **kwargs):
+        texto = request.POST.get('texto')
+        processo_id = request.POST.get('processo_id')
+        
+        if texto and processo_id:
+            processo = Process.objects.get(id=processo_id)
+            log = ProcessLog.objects.create(
+                processo=processo,
+                usuario=request.user,
+                texto=texto
+            )
+            return JsonResponse({
+                'status': 'success',
+                'usuario': log.usuario.get_full_name() or log.usuario.username,
+                'data': log.data_criacao.strftime('%d/%m/%Y %H:%M'), 
+                'texto': log.texto
+            })
+        return JsonResponse({'status': 'error'}, status=400)
+
+
+

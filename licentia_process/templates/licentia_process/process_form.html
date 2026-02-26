@@ -70,6 +70,11 @@
                             <i class="fa-solid fa-history me-2"></i> Histórico
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="#tabs-diario" class="nav-link" data-bs-toggle="tab">
+                            <i class="fa-solid fa-comments me-2"></i> Diário de bordo
+                        </a>
+                    </li>
                 </ul>
             </div>
 
@@ -104,9 +109,11 @@
                     <div class="tab-pane" id="tabs-fluxo-autrec">
                         <div class="row">
                             
-                            {% include "licentia_process/includes/form_field.html" with field=form.status_analise_autrec %}
                             {% include "licentia_process/includes/form_field.html" with field=form.solicitar_imagem %}
                             {% include "licentia_process/includes/form_field.html" with field=form.enviar_formulario %}
+                            
+                            {% include "licentia_process/includes/form_field.html"  %}
+                            {% include "licentia_process/includes/form_field.html" with field=form.status_analise_autrec %}
                             {% include "licentia_process/includes/form_field.html" with field=form.observacao_autrec %}
                         </div>
                     </div>
@@ -253,6 +260,39 @@
                         </div>
                     </div>
 
+                    <div class="tab-pane" id="tabs-diario">
+                        <div class="mb-4">
+                            <textarea id="log-texto" class="form-control" rows="3" placeholder="Digite um avanço..."></textarea>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <small class="text-muted">Dica: Use <strong>Ctrl + Enter</strong> para postar rápido.</small>
+                                <button type="button" id="btn-salvar-log" class="btn btn-primary">
+                                    Postar no diário
+                                </button>
+                            </div>
+                        </div>
+                    
+                        <div class="pt-3">
+                            <ul class="timeline" id="timeline-logs">
+                                {% for log in object.logs.all %}
+                                <li class="timeline-event">
+                                    <div class="timeline-event-icon bg-twitter-lt">
+                                        <i class="fa-solid fa-comment"></i>
+                                    </div>
+                                    <div class="card timeline-event-card">
+                                        <div class="card-body">
+                                            <div class="text-muted float-end">{{ log.data_criacao|date:"d/m/Y H:i" }}</div>
+                                            <h4>{{ log.usuario.get_full_name|default:log.usuario.username }}</h4>
+                                            <p class="text-muted">{{ log.texto|linebreaksbr }}</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% empty %}
+                                <p id="no-logs" class="text-muted text-center">Nenhum registro ainda.</p>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -271,22 +311,86 @@
 
 {% block extra_js %}
 <script>
-    
-
-    document.addEventListener("DOMContentLoaded", function() {
-    // Procura o primeiro campo com erro
-    var firstError = document.querySelector('.text-danger');
-    if (firstError) {
-        // Encontra a aba (tab-pane) pai desse erro
-        var pane = firstError.closest('.tab-pane');
-        if (pane) {
-            // Ativa o link da aba correspondente
-            var id = pane.getAttribute('id');
-            var tabLink = document.querySelector('a[href="#' + id + '"]');
-            var bsTab = new bootstrap.Tab(tabLink);
-            bsTab.show();
+    document.addEventListener("DOMContentLoaded", function () {
+        // Procura o primeiro campo com erro
+        var firstError = document.querySelector('.text-danger');
+        if (firstError) {
+            // Encontra a aba (tab-pane) pai desse erro
+            var pane = firstError.closest('.tab-pane');
+            if (pane) {
+                // Ativa o link da aba correspondente
+                var id = pane.getAttribute('id');
+                var tabLink = document.querySelector('a[href="#' + id + '"]');
+                var bsTab = new bootstrap.Tab(tabLink);
+                bsTab.show();
+            }
         }
-    }
-});
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        const logInput = document.getElementById('log-texto');
+        const btnSalvar = document.getElementById('btn-salvar-log');
+
+        // Função que executa o envio do AJAX
+        function executarSalvamentoLog() {
+            const texto = logInput.value.trim();
+            const processoId = "{{ object.id }}";
+
+            if (!texto) {
+                alert("Digite algo antes de postar.");
+                return;
+            }
+
+            fetch("{% url 'process:save_process_log' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: `texto=${encodeURIComponent(texto)}&processo_id=${processoId}`
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        logInput.value = ''; // Limpa o campo
+
+                        const noLogs = document.getElementById('no-logs');
+                        if (noLogs) noLogs.remove();
+
+                        const timeline = document.getElementById('timeline-logs');
+                        const novoItem = `
+                    <li class="timeline-event">
+                        <div class="timeline-event-icon bg-twitter-lt">
+                            <i class="fa-solid fa-comment text-white"></i>
+                        </div>
+                        <div class="card timeline-event-card">
+                            <div class="card-body">
+                                <div class="text-muted float-end">${data.data}</div>
+                                <h4>${data.usuario}</h4>
+                                <p class="text-muted">${data.texto.replace(/\n/g, '<br>')}</p>
+                            </div>
+                        </div>
+                    </li>`;
+                        timeline.insertAdjacentHTML('afterbegin', novoItem);
+                    }
+                })
+                .catch(error => console.error('Erro ao salvar log:', error));
+        }
+
+        // 1. Ouvinte para o Clique no Botão
+        if (btnSalvar) {
+            btnSalvar.addEventListener('click', executarSalvamentoLog);
+        }
+
+        // 2. Ouvinte para o Atalho Ctrl + Enter (no campo de texto)
+        if (logInput) {
+            logInput.addEventListener('keydown', function (event) {
+                // Verifica Ctrl + Enter ou Meta(Mac) + Enter
+                if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+                    event.preventDefault(); // Evita o salto de linha
+                    executarSalvamentoLog();
+                }
+            });
+        }
+    });
 </script>
 {% endblock %}

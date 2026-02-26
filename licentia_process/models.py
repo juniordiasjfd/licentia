@@ -202,4 +202,19 @@ class Process(AuditoriaBase):
     def __str__(self):
         return f"{self.retranca} - {self.titulo_descricao or 'Sem título'}"
 
+class ProcessLog(models.Model):
+    '''
+    Classe para o diário de bordo.
+    '''
+    processo = models.ForeignKey(Process, on_delete=models.CASCADE, related_name='logs')
+    usuario = models.ForeignKey('users.User', on_delete=models.SET_NULL, null=True)
+    texto = models.TextField("Relato da atividade")
+    data_criacao = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-data_criacao']
+        verbose_name = "Log do processo"
+        verbose_name_plural = 'Logs do processo'
+
+    def __str__(self):
+        return f"Log de {self.usuario} em {self.data_criacao}"

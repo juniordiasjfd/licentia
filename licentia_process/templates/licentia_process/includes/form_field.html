@@ -1,9 +1,25 @@
-<div class="{% if field.field.widget.input_type == 'textarea' or 'ckeditor' in field.field.widget.attrs.class %}col-12{% else %}col-md-6{% endif %} mb-3">
-    <label class="form-label {% if field.field.required %}required{% endif %}">
-        {{ field.label }}
-    </label>
-    {{ field }}
-    {% if field.errors %}
-        <div class="text-danger small">{{ field.errors.0 }}</div>
-    {% endif %}
-</div>
+{% if field.field.widget.input_type == 'checkbox' %}
+    {# Renderização específica para SWITCHES (Booleanos) #}
+    <div class="col-md-6 mb-3">
+        <label class="form-check form-switch pt-4 d-inline-block"> 
+            {# O input deve vir antes do span de texto #}
+            {{ field }}
+            <span class="form-check-label fw-bold">{{ field.label }}</span>
+        </label>
+        {% if field.errors %}
+            <div class="text-danger small">{{ field.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+{% else %}
+    {# Renderização para todos os outros campos (Text, Select, Textarea) #}
+    <div class="{% if field.field.widget.input_type == 'textarea' or 'ckeditor' in field.field.widget.attrs.class %}col-12{% else %}col-md-6{% endif %} mb-3">
+        <label class="form-label {% if field.field.required %}required{% endif %}">
+            {{ field.label }}
+        </label>
+        {{ field }}
+        {% if field.errors %}
+            <div class="text-danger small">{{ field.errors.0 }}</div>
+        {% endif %}
+    </div>
+{% endif %}

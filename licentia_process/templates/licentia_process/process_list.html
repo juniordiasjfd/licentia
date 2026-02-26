@@ -25,7 +25,8 @@
                     <th>Status do processo</th>
                     <th>Valor (R$)</th>
                     <th>Data de entrada</th>
-                    <th class="text-end">Ações</th>
+                    <th class="text-center">Ações Especiais</th> 
+                    <th class="w-1"></th>
                 </tr>
             </thead>
             <tbody>
@@ -48,11 +49,32 @@
                         R$ {{ objeto.valor_do_processo|default:"0,00" }}
                     </td>
                     <td>{{ objeto.data_entrada|date:"d/m/Y"|default:"-" }}</td>
-                    <td class="text-end">
+                    <td class="text-center">
+                        {% if objeto.solicitar_imagem %}
+                            <span class="badge bg-purple-lt" title="Solicitar imagem">
+                                <i class="fa-solid fa-image me-1"></i> Imagem
+                            </span>
+                        {% endif %}
+        
+                        {% if objeto.enviar_formulario %}
+                            <span class="badge bg-orange-lt" title="Enviar formulário">
+                                <i class="fa-solid fa-paper-plane me-1"></i> Formulário
+                            </span>
+                        {% endif %}
+        
+                        {% if not objeto.solicitar_imagem and not objeto.enviar_formulario %}
+                            <span class="text-muted small">-</span>
+                        {% endif %}
+                    </td>
+        
+                    <td>
+                        <a href="{% url 'process:process_update' objeto.id %}" class="btn btn-sm btn-light">Editar</a>
+                    </td>
+                    <!-- <td class="text-end">
                         <a href="{% url 'process:process_update' objeto.pk %}" class="btn btn-sm btn-outline-primary">
                             <i class="fa-solid fa-edit me-1"></i> Editar
                         </a>
-                    </td>
+                    </td> -->
                 </tr>
                 {% empty %}
                 <tr>
