@@ -13,6 +13,34 @@
     max-width: 320px;
     word-break: break-word;
 }
+
+
+/* Botão Flutuante Estratégico */
+.btn-save-sticky {
+    position: fixed;
+    top: 85px; /* Ajuste este valor dependendo da altura da sua navbar */
+    right: 25px;
+    z-index: 1030; /* Acima de quase tudo, mas abaixo de modais */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 50px; /* Estilo 'pill' para parecer um elemento flutuante */
+    padding: 10px 20px;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-save-sticky:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Esconde o botão em telas muito pequenas para não cobrir o conteúdo */
+@media (max-width: 768px) {
+    .btn-save-sticky {
+        bottom: 20px; /* No mobile, melhor ficar embaixo */
+        top: auto;
+        right: 15px;
+    }
+}
 </style>
 {% endblock %}
 
@@ -21,6 +49,12 @@
     <div class="col-lg-10">
         <form method="post" class="card shadow-sm" novalidate>
             {% csrf_token %}
+
+            <button type="submit" name="_continue" class="btn btn-primary btn-save-sticky">
+                <i class="fa-solid fa-sync-alt me-2"></i> Salvar e permanecer
+            </button>
+
+
             <div class="card-status-top bg-teal"></div>
 
             <div class="card-body border-bottom py-3 bg-light">
@@ -306,9 +340,14 @@
 
             <div class="card-footer d-flex justify-content-between">
                 <a href="{{ url_listagem }}" class="btn btn-link link-secondary">Cancelar</a>
-                <button type="submit" class="btn btn-teal">
-                    <i class="fa-solid fa-save me-2"></i> Salvar {{ verbose_name }}
-                </button>
+                
+                <div class="d-flex gap-2">
+                    
+
+                    <button type="submit" class="btn btn-teal">
+                        <i class="fa-solid fa-check me-2"></i> Salvar e fechar
+                    </button>
+                </div>
             </div>
         </form>
     </div>

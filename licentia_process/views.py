@@ -6,6 +6,7 @@ from .models import Process, ProcessLog
 from .forms import ProcessForm
 from django.http import JsonResponse
 from django.views import View
+from django.shortcuts import redirect
 
 
 class ProcessContextMixin:
@@ -71,6 +72,9 @@ class ProcessUpdateView(ProcessContextMixin, UpdateView):
 
         form.instance.atualizado_por = self.request.user
         messages.success(self.request, f"Processo {self.object.retranca} atualizado!")
+        # Se o botão "permanecer" foi clicado, redireciona para a mesma página
+        if "_continue" in self.request.POST:
+            return redirect('process:process_update', pk=self.object.pk)
         return super().form_valid(form)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
