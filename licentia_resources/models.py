@@ -2,6 +2,27 @@ from django.db import models
 from core.models import AuditoriaBase
 
 
+
+class ConfiguracaoCoresStatusChoices:
+    # Cores padrão do Tabler (bg-xxx-lt)
+    default = 'blue'
+    CORES_CHOICES = [
+        ('blue', 'Azul'),
+        ('azure', 'Azul Marinho'),
+        ('indigo', 'Indigo'),
+        ('purple', 'Roxo'),
+        ('pink', 'Rosa'),
+        ('red', 'Vermelho'),
+        ('orange', 'Laranja'),
+        ('yellow', 'Amarelo'),
+        ('lime', 'Lima'),
+        ('green', 'Verde'),
+        ('teal', 'Verde-Água'),
+        ('cyan', 'Ciano'),
+        ('gray', 'Cinza'),
+        ('dark', 'Preto/Escuro'),
+    ]
+
 class Componente(AuditoriaBase):
     nome = models.CharField('Nome', max_length=100, unique=True)
     class Meta:
@@ -24,6 +45,7 @@ class Projeto(AuditoriaBase):
 
 class StatusDoProcesso(AuditoriaBase):
     nome = models.CharField('Nome', max_length=100, unique=True)
+    cor = models.CharField(verbose_name='Cor', choices=ConfiguracaoCoresStatusChoices.CORES_CHOICES, default=ConfiguracaoCoresStatusChoices.default)
     class Meta:
         verbose_name = 'Status do processo'
         verbose_name_plural = 'Status dos processos'
@@ -33,6 +55,7 @@ class StatusDoProcesso(AuditoriaBase):
 
 class StatusDoOrcamento(AuditoriaBase):
     nome = models.CharField('Nome', max_length=100, unique=True, help_text='Situação de recebimento do orçamento.')
+    cor = models.CharField(verbose_name='Cor', choices=ConfiguracaoCoresStatusChoices.CORES_CHOICES, default=ConfiguracaoCoresStatusChoices.default)
     class Meta:
         verbose_name = 'Status do orçamento'
         verbose_name_plural = 'Status dos orçamentos'
@@ -42,6 +65,7 @@ class StatusDoOrcamento(AuditoriaBase):
 
 class StatusDoOrcamentoAprovacao(AuditoriaBase):
     nome = models.CharField('Nome', max_length=100, unique=True, help_text='Situação de aprovação do orçamento.')
+    cor = models.CharField(verbose_name='Cor', choices=ConfiguracaoCoresStatusChoices.CORES_CHOICES, default=ConfiguracaoCoresStatusChoices.default)
     class Meta:
         verbose_name = 'Status de aprovação do orçamento'
         verbose_name_plural = 'Status de aprovações de orçamento'

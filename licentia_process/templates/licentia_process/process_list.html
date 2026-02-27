@@ -120,17 +120,17 @@
                         <div class="text-muted small" title="Volume">Volume {{ objeto.volume|default:"-" }}</div>
                     </td>
                     <td>
-                        <span class="badge bg-blue-lt" title="Status do processo">
+                        <span class="badge bg-{{ objeto.status_do_processo.cor|default:'blue' }}-lt" title="Status do processo">
                             {{ objeto.status_do_processo.nome|default:"-" }}
                         </span>
                     </td>
                     <td>
-                        <span class="badge bg-blue-lt mb-1" title="Situação do recebimento do orçamento">
+                        <span class="badge bg-{{ objeto.status_do_orcamento.cor|default:'blue' }}-lt mb-1" title="Situação do recebimento do orçamento">
                             <i class="fa-solid fa-file-invoice-dollar me-1"></i>
                             {{ objeto.status_do_orcamento.nome|default:"-" }}
                         </span> <br>
                         
-                        <span class="badge bg-purple-lt" title="Aprovação do orçamento">
+                        <span class="badge bg-{{ objeto.status_do_orcamento_aprovacao.cor|default:'blue' }}-lt" title="Aprovação do orçamento">
                             <i class="fa-solid fa-file-signature me-1"></i>
                             {{ objeto.status_do_orcamento_aprovacao.nome|default:"-" }}
                         </span>

@@ -26,8 +26,23 @@
                         <div class="{% if field.name in 'criado_por atualizado_por criado_em atualizado_em' %}col-md-3{% else %}col-md-12{% endif %} mb-3">
                             <label class="form-label">{{ field.label }}</label>
                             
-                            {# Renderiza o campo sempre #}
-                            {{ field }}
+                            {% if field.name == 'cor' %}
+                            {# Layout especial para o campo de cor com Preview #}
+                            <div class="row g-2 align-items-center">
+                                <div class="col">
+                                    {{ field }}
+                                </div>
+                                <div class="col-auto">
+                                    <span id="preview-{{ field.id_for_label }}" class="badge bg-{{ field.value|default:'blue' }}-lt"
+                                        style="min-width: 80px;">
+                                        Preview
+                                    </span>
+                                </div>
+                            </div>
+                            {% else %}
+                                {# Renderização normal para os outros campos #}
+                                {{ field }}
+                            {% endif %}
                 
                             {# Exibe erros se houverem #}
                             {% if field.errors %}
@@ -53,4 +68,28 @@
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Procura todos os campos que terminam com 'cor' (id_cor)
+        const colorInputs = document.querySelectorAll('select[name="cor"]');
+        
+        colorInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const selectedColor = this.value;
+                const previewId = 'preview-' + this.id;
+                const previewSpan = document.getElementById(previewId);
+                
+                if (previewSpan) {
+                    // Limpa as classes de cor anteriores do Tabler, mantendo a estrutura base
+                    previewSpan.className = 'badge';
+                    // Adiciona a nova cor (ex: bg-green-lt)
+                    previewSpan.classList.add(`bg-${selectedColor}-lt`);
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}
