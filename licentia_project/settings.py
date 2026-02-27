@@ -144,9 +144,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
+LOGIN_URL = 'users:login'
 LOGIN_REDIRECT_URL = 'core:home'
-LOGOUT_REDIRECT_URL = 'login'
-LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = 'users:login'
 
 # Exibe o e-mail de recuperação no terminal do VS Code/Console
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

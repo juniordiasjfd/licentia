@@ -13,5 +13,6 @@ urlpatterns = [
     path('ativar/<int:pk>/', views.AtivarUsuarioView.as_view(), name='ativar_usuario'),
     path('suspender/<int:pk>/', views.SuspenderUsuarioView.as_view(), name='suspender_usuario'),
     path('configuracoes/', views.UserSettingsUpdateView.as_view(), name='settings'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='users:login'), name='logout'),
 ]

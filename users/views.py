@@ -66,7 +66,7 @@ class DepartamentoUpdateView(CoordenadorRequiredMixin, DepartamentoContextMixin,
 
 class RegistroView(CreateView):
     form_class = RegistroUsuarioForm
-    success_url = reverse_lazy("login")
+    success_url = reverse_lazy("users:login")
     template_name = "registration/register.html"
 
     def form_valid(self, form):

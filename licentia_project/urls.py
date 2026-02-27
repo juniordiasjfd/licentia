@@ -8,15 +8,13 @@ urlpatterns = [
 
     path("ckeditor5/", include('django_ckeditor_5.urls')),
     
-    # Rotas de Autenticação (login, logout, password_reset)
-    # O Django buscará os templates em templates/registration/
     path('accounts/', include('django.contrib.auth.urls')),
     
     # Rota do App Core (Home)
     path('', include('core.urls')),
     
     # Rota do App Users (para futuras gestões de perfil)
-    path('users/', include('users.urls')),
+    path('users/', include('users.urls', namespace='users')),
 
     path('recursos/', include('licentia_resources.urls')),
 

@@ -12,6 +12,7 @@ from .filters import ProcessFilter
 
 
 class ProcessContextMixin:
+    login_url = 'users:login'
     """Mixin para padronizar variáveis de template e URLs"""
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

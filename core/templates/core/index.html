@@ -4,27 +4,112 @@
 {% block page_title %}Visão geral{% endblock %}
 
 {% block content %}
-<div class="row row-deck row-cards">
-  <div class="col-sm-6 col-lg-3">
-    <div class="card">
-      <div class="card-body">
-        <div class="d-flex align-items-center">
-          <div class="subheader">Total de usuários</div>
-        </div>
-        <div class="h1 mb-3 text-teal">{{ stats.usuarios }}</div>
-      </div>
-    </div>
-  </div>
-  
-  <div class="col-sm-6 col-lg-3">
-    <div class="card">
-      <div class="card-body">
-        <div class="d-flex align-items-center">
-          <div class="subheader">Recursos pendentes</div>
-        </div>
-        <div class="h1 mb-3">{{ stats.recursos_pendentes }}</div>
-      </div>
-    </div>
+<div class="card mb-3">
+  <div class="card-body">
+      <form method="get" class="row g-2">
+          <div class="col-md-4">
+              <label class="form-label">Projeto</label>
+              <select name="projeto" class="form-select">
+                  <option value="">Todos</option>
+                  {% for p in projetos %}
+                  <option value="{{ p.id }}" {% if request.GET.projeto == p.id|stringformat:"s" %}selected{% endif %}>{{ p.nome }}</option>
+                  {% endfor %}
+              </select>
+          </div>
+          <div class="col-md-3">
+              <label class="form-label">Componente</label>
+              <select name="componente" class="form-select">
+                  <option value="">Todos</option>
+                  {% for c in componentes %}
+                  <option value="{{ c.id }}" {% if request.GET.componente == c.id|stringformat:"s" %}selected{% endif %}>{{ c.nome }}</option>
+                  {% endfor %}
+              </select>
+          </div>
+          <div class="col-md-2">
+              <label class="form-label">Volume</label>
+              <input type="number" name="volume" value="{{ request.GET.volume }}" class="form-control">
+          </div>
+          <div class="col-md-3 d-flex align-items-end">
+              <button type="submit" class="btn btn-primary w-100">Atualizar Dashboard</button>
+          </div>
+      </form>
   </div>
 </div>
+
+<div class="row row-cards">
+  <div class="col-lg-4">
+      <div class="card">
+          <div class="card-body">
+              <h3 class="card-title">Valor por Status do Processo</h3>
+              <div id="chart-status-processo"></div>
+          </div>
+      </div>
+  </div>
+  <div class="col-lg-4">
+      <div class="card">
+          <div class="card-body">
+              <h3 class="card-title">Valor por Status do Orçamento</h3>
+              <div id="chart-status-orcamento"></div>
+          </div>
+      </div>
+  </div>
+  <div class="col-lg-4">
+      <div class="card">
+          <div class="card-body">
+              <h3 class="card-title">Valor por Status de Aprovação</h3>
+              <div id="chart-status-aprovacao"></div>
+          </div>
+      </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<script>
+    // Função para criar os gráficos
+    function renderChart(elementId, chartData) {
+        // Se não houver dados, exibe uma mensagem no console para debug
+        if (!chartData || chartData.length === 0) {
+            document.querySelector(elementId).innerHTML = "<p class='text-muted'>Sem dados para exibir</p>";
+            return;
+        }
+
+        const options = {
+            series: [{
+                name: 'Valor total',
+                data: chartData.map(item => parseFloat(item.total_valor))
+            }],
+            chart: { type: 'bar', height: 300, toolbar: { show: false } },
+            colors: ['#206bc4'],
+            xaxis: {
+                // Aqui pegamos o nome do status dinamicamente
+                categories: chartData.map(item => {
+                    const keys = Object.keys(item);
+                    return item[keys[0]] || "Não definido"; 
+                })
+            },
+            yaxis: {
+                labels: {
+                    formatter: (value) => "R$ " + value.toLocaleString('pt-BR')
+                }
+            },
+            tooltip: {
+                y: { formatter: (value) => "R$ " + value.toLocaleString('pt-BR') }
+            }
+        };
+
+        const chart = new ApexCharts(document.querySelector(elementId), options);
+        chart.render();
+    }
+
+    // 2. Chamar a função para cada gráfico assim que o DOM carregar
+    document.addEventListener("DOMContentLoaded", function () {
+        renderChart("#chart-status-processo", {{ data_status_do_processo|safe }});
+        renderChart("#chart-status-orcamento", {{ data_status_do_orcamento|safe }});
+        renderChart("#chart-status-aprovacao", {{ data_status_do_orcamento_aprovacao|safe }});
+    });
+</script>
 {% endblock %}

@@ -98,11 +98,12 @@
             <thead>
                 <tr>
                     <th>Retranca / Título</th>
-                    <th>Projeto / Componente</th>
-                    <th>Status do processo</th>
+                    <th>Proj. / Comp. / Vol.</th>
+                    <th>Processo</th>
+                    <th>Orçamento / Aprovação</th>
                     <th>Valor (R$)</th>
                     <th>Data de entrada</th>
-                    <th class="text-center">Ações Especiais</th> 
+                    <th>Ações Especiais</th> 
                     <th class="w-1"></th>
                 </tr>
             </thead>
@@ -110,27 +111,39 @@
                 {% for objeto in objetos %}
                 <tr>
                     <td>
-                        <span class="fw-bold text-dark">{{ objeto.retranca }}</span>
-                        <div class="text-muted small">{{ objeto.titulo_descricao|truncatechars:30 }}</div>
+                        <span class="fw-bold text-dark" title="Retranca">{{ objeto.retranca }}</span>
+                        <div class="text-muted small" title="Título ou descrição">{{ objeto.titulo_descricao|truncatechars:30 }}</div>
                     </td>
                     <td>
-                        {{ objeto.projeto.nome|default:"-" }}
-                        <div class="text-muted small">{{ objeto.componente.nome|default:"" }}</div>
+                        <span title="Projeto">{{ objeto.projeto.nome|default:"-" }}</span>
+                        <div class="text-muted small" title="Componente">{{ objeto.componente.nome|default:"" }}</div>
+                        <div class="text-muted small" title="Volume">Volume {{ objeto.volume|default:"-" }}</div>
                     </td>
                     <td>
-                        <span class="badge bg-blue-lt">
-                            {{ objeto.status_do_processo.nome|default:"Pendente" }}
+                        <span class="badge bg-blue-lt" title="Status do processo">
+                            {{ objeto.status_do_processo.nome|default:"-" }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge bg-blue-lt mb-1" title="Situação do recebimento do orçamento">
+                            <i class="fa-solid fa-file-invoice-dollar me-1"></i>
+                            {{ objeto.status_do_orcamento.nome|default:"-" }}
+                        </span> <br>
+                        
+                        <span class="badge bg-purple-lt" title="Aprovação do orçamento">
+                            <i class="fa-solid fa-file-signature me-1"></i>
+                            {{ objeto.status_do_orcamento_aprovacao.nome|default:"-" }}
                         </span>
                     </td>
                     <td class="fw-bold text-teal">
                         R$ {{ objeto.valor_do_processo|default:"0,00" }}
                     </td>
                     <td>{{ objeto.data_entrada|date:"d/m/Y"|default:"-" }}</td>
-                    <td class="text-center">
+                    <td>
                         {% if objeto.solicitar_imagem %}
                             <span class="badge bg-purple-lt" title="Solicitar imagem">
                                 <i class="fa-solid fa-image me-1"></i> Imagem
-                            </span>
+                            </span> <br>
                         {% endif %}
         
                         {% if objeto.enviar_formulario %}
