@@ -16,6 +16,29 @@
         </div>
     </div>
     
+    <div class="mb-3">
+        <form action="" method="get" class="input-icon">
+            <span class="input-icon-addon">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
+            <input type="text" name="q" value="{{ request.GET.q|default:'' }}" 
+                   class="form-control" placeholder="Buscar por retranca, projeto, status, diário de bordo... (exceto: volume, unidade, lote, limitacão anos, limitação tiragem)" 
+                   aria-label="Search in processes">
+        </form>
+    </div>
+
+    {% if request.GET.q %}
+    <div class="mb-3 d-flex align-items-center">
+        <span class="text-muted">
+            Resultados para: <strong>"{{ request.GET.q }}"</strong>
+        </span>
+        <a href="{% url 'process:process_list' %}" class="btn btn-sm btn-link text-danger ms-2">
+            Limpar busca
+        </a>
+    </div>
+    {% endif %}
+
+    
     <div class="table-responsive">
         <table class="table card-table table-vcenter text-nowrap datatable">
             <thead>

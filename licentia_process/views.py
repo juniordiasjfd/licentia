@@ -7,6 +7,7 @@ from .forms import ProcessForm
 from django.http import JsonResponse
 from django.views import View
 from django.shortcuts import redirect
+from django.db.models import Q
 
 
 class ProcessContextMixin:
@@ -24,6 +25,54 @@ class ProcessListView(ProcessContextMixin, ListView):
     template_name = 'licentia_process/process_list.html'
     context_object_name = 'objetos'
     ordering = ['-data_entrada']
+    paginate_by = 20
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get('q')
+        
+        if query:
+            # Busca em múltiplos campos. Adicione ou remova conforme necessário.
+            queryset = queryset.filter(
+                # Q(volume__icontains=query) |
+                Q(pagina__icontains=query) |
+                # Q(unidade__icontains=query) |
+                # Q(lote__icontains=query) |
+                # Q(limitacao_anos__icontains=query) |
+                # Q(limitacao_tiragem__icontains=query) |
+                Q(retranca__icontains=query) |
+                Q(capitulo_secao__icontains=query) |
+                Q(titulo_descricao__icontains=query) |
+                Q(solicitado_para__icontains=query) |
+                Q(obra_original__icontains=query) |
+                Q(codigo_biblioteca_link__icontains=query) |
+                Q(observacao_exemplares__icontains=query) |
+                Q(limitacao_outros__icontains=query) |
+                Q(observacao_editorial__icontains=query) |
+                Q(credito_obrigatorio__icontains=query) |
+                Q(observacao_autrec__icontains=query) |
+                Q(localizacao_do_recurso__nome__icontains=query) |
+                Q(fornecedor__nome__icontains=query) |
+                Q(fornecedor__razao_social__icontains=query) |
+                Q(status_analise_editorial__nome__icontains=query) |
+                Q(status_analise_autrec__nome__icontains=query) |
+                Q(status_do_orcamento__nome__icontains=query) |
+                Q(status_do_orcamento_aprovacao__nome__icontains=query) |
+                Q(status_do_processo__nome__icontains=query) |
+                Q(status_do_processo_pagamento_fornecedor__nome__icontains=query) |
+                Q(empresa__nome__icontains=query) |
+                Q(centro_de_custo__nome__icontains=query) |
+                Q(tipo_de_termo__nome__icontains=query) |
+                Q(limitacao_edicao__nome__icontains=query) |
+                Q(status_do_freela_pagamento__nome__icontains=query) |
+                Q(projeto__nome__icontains=query) |
+                Q(componente__nome__icontains=query) |
+                Q(atribuido_a__username__icontains=query) |
+                Q(atribuido_a__first_name__icontains=query) |
+                Q(atribuido_a__last_name__icontains=query) |
+                Q(logs__texto__icontains=query)
+            ).distinct() # distinct evita duplicados em buscas de ManyToMany
+            
+        return queryset
 
 class ProcessCreateView(ProcessContextMixin, CreateView):
     model = Process
