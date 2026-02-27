@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django_ckeditor_5',
+    'django_filters',
 
     'core.apps.CoreConfig',
     'licentia_resources.apps.LicentiaResourcesConfig',

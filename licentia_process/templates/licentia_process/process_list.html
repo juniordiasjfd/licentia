@@ -17,26 +17,80 @@
     </div>
     
     <div class="mb-3">
-        <form action="" method="get" class="input-icon">
-            <span class="input-icon-addon">
-                <i class="fa-solid fa-magnifying-glass"></i>
-            </span>
-            <input type="text" name="q" value="{{ request.GET.q|default:'' }}" 
-                   class="form-control" placeholder="Buscar por retranca, projeto, status, diário de bordo... (exceto: volume, unidade, lote, limitacão anos, limitação tiragem)" 
-                   aria-label="Search in processes">
+        <form action="" method="get">
+            <div class="input-icon mb-2">
+                <span class="input-icon-addon">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" name="q" value="{{ request.GET.q|default:'' }}" 
+                       class="form-control" 
+                       placeholder="Buscar por retranca, projeto, status, diário de bordo...">
+            </div>
+    
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    {% if request.GET.q or request.GET.volume or request.GET.unidade or request.GET.lote or request.GET.limitacao_anos or request.GET.limitacao_tiragem or request.GET.data_entrada_inicio or request.GET.data_entrada_fim or request.GET.data_analise_autrec_inicio or request.GET.data_analise_autrec_fim %}
+                        <span class="text-muted small">
+                            Filtros ativos. <a href="{% url 'process:process_list' %}" class="text-danger">Limpar tudo</a>
+                        </span>
+                    {% endif %}
+                </div>
+                <button class="btn btn-sm btn-ghost-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilters">
+                    <i class="fa-solid fa-sliders me-2"></i> Filtros Avançados
+                </button>
+            </div>
+    
+            <div class="collapse {% if filter.form.data.volume or filter.form.data.lote %}show{% endif %} mt-3" id="collapseFilters">
+                <div class="card card-body shadow-sm bg-light">
+                    <div class="row g-3">
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold">Volume</label>
+                            <input type="number" name="volume" value="{{ request.GET.volume }}" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold">Unidade</label>
+                            <input type="number" name="unidade" value="{{ request.GET.unidade }}" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold">Lote</label>
+                            <input type="number" name="lote" value="{{ request.GET.lote }}" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold">Limitação anos</label>
+                            <input type="number" name="limitacao_anos" value="{{ request.GET.limitacao_anos }}" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold">Limitação tiragem</label>
+                            <input type="number" name="limitacao_tiragem" value="{{ request.GET.limitacao_tiragem }}" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Entrada (Início)</label>
+                            <input type="date" name="data_entrada_inicio" value="{{ request.GET.data_entrada_inicio }}" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Entrada (Fim)</label>
+                            <input type="date" name="data_entrada_fim" value="{{ request.GET.data_entrada_fim }}" class="form-control form-control-sm">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Análise AutRec (Início)</label>
+                            <input type="date" name="data_analise_autrec_inicio" value="{{ request.GET.data_analise_autrec_inicio }}" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Análise AutRec (Fim)</label>
+                            <input type="date" name="data_analise_autrec_fim" value="{{ request.GET.data_analise_autrec_fim }}" class="form-control form-control-sm">
+                        </div>
+                        
+                        <div class="col-12 text-end mt-3">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fa-solid fa-filter me-2"></i> Aplicar Filtros
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
-
-    {% if request.GET.q %}
-    <div class="mb-3 d-flex align-items-center">
-        <span class="text-muted">
-            Resultados para: <strong>"{{ request.GET.q }}"</strong>
-        </span>
-        <a href="{% url 'process:process_list' %}" class="btn btn-sm btn-link text-danger ms-2">
-            Limpar busca
-        </a>
-    </div>
-    {% endif %}
 
     
     <div class="table-responsive">
