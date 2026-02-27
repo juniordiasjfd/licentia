@@ -25,18 +25,29 @@ class ProcessListView(ProcessContextMixin, ListView):
     model = Process
     template_name = 'licentia_process/process_list.html'
     context_object_name = 'objetos'
-    ordering = ['-data_entrada']
+    # ordering = ['-atualizado_em']
     paginate_by = 100
     def get_queryset(self):
         queryset = super().get_queryset()
+        try:
+            preferencia_ordem = self.request.user.configuracoes.ordenar_por
+            queryset = queryset.order_by(preferencia_ordem)
+        except:
+            queryset = queryset.order_by('-atualizado_em')
         self.filterset = ProcessFilter(self.request.GET, queryset=queryset)
         return self.filterset.qs
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.filterset
         return context
+    # def get_paginate_by(self, queryset):
+    #     return self.request.GET.get('paginate_by', self.paginate_by)
     def get_paginate_by(self, queryset):
-        return self.request.GET.get('paginate_by', self.paginate_by)
+        # Busca a config do usuário. Se não existir, usa o padrão 20.
+        try:
+            return self.request.user.configuracoes.registros_por_pagina
+        except:
+            return self.paginate_by
 
 class ProcessCreateView(ProcessContextMixin, CreateView):
     model = Process

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.contrib.auth import views as auth_views
 
 app_name = 'users'
 
@@ -11,4 +12,6 @@ urlpatterns = [
     path('departamentos/<int:pk>/editar/', views.DepartamentoUpdateView.as_view(), name='departamento_update'),
     path('ativar/<int:pk>/', views.AtivarUsuarioView.as_view(), name='ativar_usuario'),
     path('suspender/<int:pk>/', views.SuspenderUsuarioView.as_view(), name='suspender_usuario'),
+    path('configuracoes/', views.UserSettingsUpdateView.as_view(), name='settings'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]

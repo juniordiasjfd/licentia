@@ -1,0 +1,48 @@
+{% extends "core/base.html" %}
+
+{% block page_title %}Minhas preferências{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <form method="post" class="card shadow-sm">
+            {% csrf_token %}
+            <div class="card-header">
+                <h3 class="card-title">Configurações de exibição</h3>
+            </div>
+            
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">{{ form.registros_por_pagina.label }}</label>
+                    {{ form.registros_por_pagina }}
+                    <small class="form-hint text-muted">Quantidade de processos exibidos por página na listagem.</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">{{ form.ordenar_por.label }}</label>
+                    {{ form.ordenar_por }}
+                    <small class="form-hint text-muted">Critério padrão de ordenação ao abrir o sistema.</small>
+                </div>
+            </div>
+
+            <div class="card-footer text-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-save me-2"></i> Salvar preferências
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Garante que os campos do Django usem as classes do Tabler */
+    input, select { 
+        display: block;
+        width: 100%;
+        padding: 0.4375rem 0.75rem;
+        font-size: 0.875rem;
+        border: 1px solid #dadcde;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}

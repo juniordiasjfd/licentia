@@ -3,12 +3,25 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import ListView
 from .forms import RegistroUsuarioForm, AtivacaoUsuarioForm, DepartamentoForm
 from django.contrib import messages
-from .models import User, Departamento
+from .models import User, Departamento, ConfiguracoesDoUsuario
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .mixins import CoordenadorRequiredMixin
 from django.views import View
+from django.contrib.messages.views import SuccessMessageMixin
 
+
+class UserSettingsUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = ConfiguracoesDoUsuario
+    fields = ['registros_por_pagina', 'ordenar_por']
+    template_name = 'users/settings_form.html'
+    success_url = reverse_lazy('users:settings')
+    success_message = "Suas preferências foram atualizadas com sucesso!"
+    def get_object(self, queryset=None):
+        # Esta lógica garante que se o usuário não tiver o objeto criado, 
+        # o sistema cria um com os padrões do modelo automaticamente.
+        obj, created = ConfiguracoesDoUsuario.objects.get_or_create(usuario=self.request.user)
+        return obj
 
 # Mixin para centralizar o contexto comum (DRY)
 class DepartamentoContextMixin:
