@@ -26,7 +26,7 @@ class ProcessListView(ProcessContextMixin, ListView):
     template_name = 'licentia_process/process_list.html'
     context_object_name = 'objetos'
     ordering = ['-data_entrada']
-    paginate_by = 20
+    paginate_by = 100
     def get_queryset(self):
         queryset = super().get_queryset()
         self.filterset = ProcessFilter(self.request.GET, queryset=queryset)
@@ -35,6 +35,8 @@ class ProcessListView(ProcessContextMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.filterset
         return context
+    def get_paginate_by(self, queryset):
+        return self.request.GET.get('paginate_by', self.paginate_by)
 
 class ProcessCreateView(ProcessContextMixin, CreateView):
     model = Process

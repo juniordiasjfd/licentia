@@ -97,7 +97,7 @@
         <table class="table card-table table-vcenter text-nowrap datatable">
             <thead>
                 <tr>
-                    <th>Retranca</th>
+                    <th>Retranca / Título</th>
                     <th>Projeto / Componente</th>
                     <th>Status do processo</th>
                     <th>Valor (R$)</th>
@@ -145,7 +145,7 @@
                     </td>
         
                     <td>
-                        <a href="{% url 'process:process_update' objeto.id %}" class="btn btn-sm btn-light">Editar</a>
+                        <a href="{% url 'process:process_update' objeto.id %}" class="btn btn-sm btn-light">Visualizar</a>
                     </td>
                     <!-- <td class="text-end">
                         <a href="{% url 'process:process_update' objeto.pk %}" class="btn btn-sm btn-outline-primary">
@@ -163,6 +163,45 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        <div class="card-footer d-flex align-items-center">
+            <p class="m-0 text-muted">
+                Exibindo <span>{{ page_obj.start_index }}</span> a <span>{{ page_obj.end_index }}</span> de <span>{{ paginator.count }}</span> registros
+            </p>
+            <ul class="pagination m-0 ms-auto">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link"><i class="fa-solid fa-chevron-left"></i></span>
+                    </li>
+                {% endif %}
+        
+                {% for num in paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-5' and num < page_obj.number|add:'5' %}
+                        <li class="page-item"><a class="page-link" href="?{{ request.GET.urlencode }}&page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+        
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link"><i class="fa-solid fa-chevron-right"></i></span>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
 </div>
 {% endblock %}
