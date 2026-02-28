@@ -6,12 +6,16 @@ from licentia_process.views import ProcessContextMixin
 from licentia_resources.models import Projeto, Componente
 from django.db.models.functions import Coalesce
 from django.db.models import DecimalField, IntegerField
+from django.shortcuts import redirect
 
 
 class HomeView(LoginRequiredMixin, ProcessContextMixin, TemplateView):
     login_url = 'users:login'
     model = Process
     template_name = 'core/index.html'
+
+    def handle_no_permission(self):
+        return redirect('core:tela_de_instrucoes')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -96,3 +100,6 @@ class HomeView(LoginRequiredMixin, ProcessContextMixin, TemplateView):
         context['componentes'] = Componente.objects.all()
         
         return context
+    
+class InstrucoesView(TemplateView):
+    template_name = 'core/instrucoes.html'

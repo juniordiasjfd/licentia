@@ -1,0 +1,52 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+
+{% block title %}Bem-vindo!{% endblock %}
+
+{% block page_title %}Bem-vindo!{% endblock %}
+
+{% block content %}
+<div class="page page-center">
+    <div class="container container-tight py-4">
+        <div class="text-center mb-4">
+            <img src="{% static 'core/images/logo.png' %}" height="60" alt="Licentia Logo">
+        </div>
+
+        <div class="card card-md">
+            <div class="card-body text-center">
+                <h2 class="h2 mb-2">Bem-vindo ao Licentia</h2>
+                <p class="text-muted">Assista aos vídeos abaixo para entender como nossa ferramenta pode otimizar seu fluxo de trabalho.</p>
+                
+                <div class="hr-text text-teal">Vídeos instrucionais</div>
+
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="ratio ratio-16x9 shadow-sm rounded">
+                            <iframe src="https://www.youtube.com/embed/EXEMPLO1" allowfullscreen></iframe>
+                        </div>
+                        <small class="d-block mt-2 font-weight-bold">Visão geral do sistema</small>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="ratio ratio-16x9 shadow-sm rounded">
+                            <iframe src="https://www.youtube.com/embed/EXEMPLO1" allowfullscreen></iframe>
+                        </div>
+                        <small class="d-block mt-2 font-weight-bold">Visão geral do sistema</small>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a href="{% url 'users:login' %}" class="btn btn-teal w-100">
+                        <i class="fa-solid fa-right-to-bracket me-2"></i> Acessar o Sistema
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center text-muted mt-3">
+            Ainda não tem acesso? <a href="{% url 'users:registrar' %}" tabindex="-1">Registre-se</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

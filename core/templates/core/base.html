@@ -75,24 +75,51 @@
         </h1>
 
         <div class="navbar-nav flex-row order-md-last">
-          <div class="nav-item dropdown">
-            <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown"
-              aria-label="Abrir menu do usuário">
-              <span class="avatar avatar-sm bg-teal-lt">{{ user.username|slice:":2"|upper }}</span>
-              <div class="d-none d-xl-block ps-2">
-                <div>{{ user.get_full_name|default:user.username }}</div>
-                <div class="mt-1 small text-muted">{{ user.departamento|default:"Sem Setor" }}</div>
+          {% if user.is_authenticated %}
+              <div class="nav-item dropdown">
+                  <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Abrir menu do usuário">
+                      <span class="avatar avatar-sm bg-teal-lt">{{ user.username|slice:":2"|upper }}</span>
+                      <div class="d-none d-xl-block ps-2">
+                          <div>{{ user.get_full_name|default:user.username }}</div>
+                          <div class="mt-1 small text-muted">{{ user.departamento|default:"Sem Setor" }}</div>
+                      </div>
+                  </a>
+                  <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                      <div class="dropdown-header">Sua Conta</div>
+                      <a class="dropdown-item" href="#">
+                          <i class="fa-solid fa-user-gear me-2 text-muted"></i> Perfil
+                      </a>
+                      <div class="dropdown-divider"></div>
+                      <form action="{% url 'users:logout' %}" method="post">
+                          {% csrf_token %}
+                          <button type="submit" class="dropdown-item text-danger">
+                              <i class="fa-solid fa-right-from-bracket me-2"></i> Sair
+                          </button>
+                      </form>
+                  </div>
               </div>
-            </a>
-            <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-              <form action="{% url 'users:logout' %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="dropdown-item">
-                  <i class="fa-solid fa-right-from-bracket me-2"></i> Sair
-                </button>
-              </form>
-            </div>
-          </div>
+          {% else %}
+              <div class="nav-item d-none d-md-flex me-3">
+                  <div class="btn-list">
+                      <a href="{% url 'users:login' %}" class="btn btn-outline-teal btn-pill">
+                          <i class="fa-solid fa-right-to-bracket me-2"></i> Login
+                      </a>
+                      <a href="{% url 'users:registrar' %}" class="btn btn-teal btn-pill">
+                          <i class="fa-solid fa-user-plus me-2"></i> Registrar
+                      </a>
+                  </div>
+              </div>
+              
+              <div class="nav-item d-md-none dropdown">
+                  <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" aria-label="Menu de acesso">
+                      <i class="fa-solid fa-circle-user fs-2 text-teal"></i>
+                  </a>
+                  <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                      <a class="dropdown-item" href="{% url 'users:login' %}">Login</a>
+                      <a class="dropdown-item" href="{% url 'users:registrar' %}">Registrar</a>
+                  </div>
+              </div>
+          {% endif %}
         </div>
 
         <div class="collapse navbar-collapse" id="navbar-menu">
@@ -168,6 +195,17 @@
                   
                   
               </div>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'core:tela_de_instrucoes' %}">
+                  <span class="nav-link-icon d-md-none d-lg-inline-block">
+                    <i class="fa-solid fa-shoe-prints"></i>
+                  </span>
+                  <span class="nav-link-title">
+                    Primeiros passos
+                  </span>
+                </a>
               </li>
 
             </ul>
