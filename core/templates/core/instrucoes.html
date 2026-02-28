@@ -8,31 +8,52 @@
 
 {% block content %}
 <div class="page page-center">
-    <div class="container container-tight py-4">
-        <div class="text-center mb-4">
-            <img src="{% static 'core/images/logo.png' %}" height="60" alt="Licentia Logo">
+    <div class="container container-tight py-4" style="max-width: 800px;"> <div class="text-center mb-4">
+            <img src="{% static 'core/images/logo.png' %}" height="80" alt="Licentia Logo">
         </div>
 
         <div class="card card-md">
             <div class="card-body text-center">
-                <h2 class="h2 mb-2">Bem-vindo ao Licentia</h2>
-                <p class="text-muted">Assista aos vídeos abaixo para entender como nossa ferramenta pode otimizar seu fluxo de trabalho.</p>
+                <h2 class="h2 mb-2">Tutoriais</h2>
+                <p class="text-muted">Explore os tutoriais rápidos para dominar a plataforma.</p>
                 
                 <div class="hr-text text-teal">Vídeos instrucionais</div>
 
-                <div class="row g-3">
+                <div class="row row-cards g-3">
                     <div class="col-6">
-                        <div class="ratio ratio-16x9 shadow-sm rounded">
-                            <iframe src="https://www.youtube.com/embed/EXEMPLO1" allowfullscreen></iframe>
+                        <div class="ratio ratio-16x9 shadow-sm rounded border">
+                            <iframe src="https://www.youtube.com/embed/ID_DO_VIDEO_1" allowfullscreen></iframe>
                         </div>
-                        <small class="d-block mt-2 font-weight-bold">Visão geral do sistema</small>
+                        <small class="d-block mt-2 fw-bold text-truncate" title="Visão Geral do Sistema">
+                            1. Visão Geral
+                        </small>
                     </div>
 
                     <div class="col-6">
-                        <div class="ratio ratio-16x9 shadow-sm rounded">
-                            <iframe src="https://www.youtube.com/embed/EXEMPLO1" allowfullscreen></iframe>
+                        <div class="ratio ratio-16x9 shadow-sm rounded border">
+                            <iframe src="https://www.youtube.com/embed/ID_DO_VIDEO_2" allowfullscreen></iframe>
                         </div>
-                        <small class="d-block mt-2 font-weight-bold">Visão geral do sistema</small>
+                        <small class="d-block mt-2 fw-bold text-truncate" title="Gestão de Recursos">
+                            2. Recursos
+                        </small>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="ratio ratio-16x9 shadow-sm rounded border">
+                            <iframe src="https://www.youtube.com/embed/ID_DO_VIDEO_3" allowfullscreen></iframe>
+                        </div>
+                        <small class="d-block mt-2 fw-bold text-truncate">
+                            3. Processos
+                        </small>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="ratio ratio-16x9 shadow-sm rounded border">
+                            <iframe src="https://www.youtube.com/embed/ID_DO_VIDEO_4" allowfullscreen></iframe>
+                        </div>
+                        <small class="d-block mt-2 fw-bold text-truncate">
+                            4. Relatórios
+                        </small>
                     </div>
                 </div>
 
@@ -45,7 +66,7 @@
         </div>
         
         <div class="text-center text-muted mt-3">
-            Ainda não tem acesso? <a href="{% url 'users:registrar' %}" tabindex="-1">Registre-se</a>
+            Ainda não tem acesso? <a href="{% url 'users:registrar' %}">Crie sua conta</a>
         </div>
     </div>
 </div>
