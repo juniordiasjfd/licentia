@@ -121,34 +121,38 @@
                     </td>
                     <td>
                         <span class="badge bg-{{ objeto.status_do_processo.cor|default:'blue' }}-lt" title="Status do processo">
+                            <i class="fa-solid fa-gears"></i>
                             {{ objeto.status_do_processo.nome|default:"-" }}
                         </span>
                     </td>
                     <td>
                         <span class="badge bg-{{ objeto.status_do_orcamento.cor|default:'blue' }}-lt mb-1" title="Situação do recebimento do orçamento">
-                            <i class="fa-solid fa-file-invoice-dollar me-1"></i>
+                            <i class="fa-solid fa-piggy-bank"></i>
                             {{ objeto.status_do_orcamento.nome|default:"-" }}
                         </span> <br>
                         
                         <span class="badge bg-{{ objeto.status_do_orcamento_aprovacao.cor|default:'blue' }}-lt" title="Aprovação do orçamento">
-                            <i class="fa-solid fa-file-signature me-1"></i>
+                            <i class="fa-solid fa-stamp"></i>
                             {{ objeto.status_do_orcamento_aprovacao.nome|default:"-" }}
                         </span>
                     </td>
                     <td class="fw-bold text-teal">
+                        <i class="fa-solid fa-money-bill-wave me-1"></i>
                         R$ {{ objeto.valor_do_processo|default:"0,00" }}
                     </td>
                     <td>{{ objeto.data_entrada|date:"d/m/Y"|default:"-" }}</td>
                     <td>
                         {% if objeto.solicitar_imagem %}
                             <span class="badge bg-purple-lt" title="Solicitar imagem">
-                                <i class="fa-solid fa-image me-1"></i> Imagem
+                                <i class="fa-solid fa-image"></i> Imagem
                             </span> <br>
                         {% endif %}
         
                         {% if objeto.enviar_formulario %}
                             <span class="badge bg-orange-lt" title="Enviar formulário">
-                                <i class="fa-solid fa-paper-plane me-1"></i> Formulário
+                                <!-- <i class="fa-solid fa-paper-plane me-1"></i>  -->
+                                <i class="fa-brands fa-wpforms"></i>
+                                Formulário
                             </span>
                         {% endif %}
         
@@ -158,7 +162,7 @@
                     </td>
         
                     <td>
-                        <a href="{% url 'process:process_update' objeto.id %}" class="btn btn-sm btn-light">Visualizar</a>
+                        <a href="{% url 'process:process_update' objeto.id %}" class="btn btn-sm btn-light"><i class="fa-solid fa-eye me-2"></i>Visualizar</a>
                     </td>
                     <!-- <td class="text-end">
                         <a href="{% url 'process:process_update' objeto.pk %}" class="btn btn-sm btn-outline-primary">
