@@ -11,14 +11,14 @@ class CoordenadorRequiredMixin(LicentiaPermissionMixin):
         user = self.request.user
         return user.is_superuser or user.groups.filter(name='Coordenador').exists()
 
-class ComumInternoRequiredMixin(LicentiaPermissionMixin):
+class UsuarioDoNucleoRequiredMixin(LicentiaPermissionMixin):
     def test_func(self):
         user = self.request.user
-        grupos_autorizados = ['Coordenador', 'Comum interno']
+        grupos_autorizados = ['Coordenador', 'Usuário do núcleo']
         return user.is_superuser or user.groups.filter(name__in=grupos_autorizados).exists()
 
-class ComumExternoRequiredMixin(LicentiaPermissionMixin):
+class UsuarioComumRequiredMixin(LicentiaPermissionMixin):
     def test_func(self):
         user = self.request.user
-        grupos_autorizados = ['Coordenador', 'Comum interno', 'Comum externo']
+        grupos_autorizados = ['Coordenador', 'Usuário do núcleo', 'Usuário comum']
         return user.is_superuser or user.groups.filter(name__in=grupos_autorizados).exists()

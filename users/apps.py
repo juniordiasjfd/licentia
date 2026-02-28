@@ -8,7 +8,7 @@ class UsersConfig(AppConfig):
 
 def create_user_groups(sender, **kwargs):
     from django.contrib.auth.models import Group
-    groups = ['Coordenador', 'Comum interno', 'Comum externo']
+    groups = ['Coordenador', 'Usuário do núcleo', 'Usuário comum']
     for name in groups:
         Group.objects.get_or_create(name=name)
 

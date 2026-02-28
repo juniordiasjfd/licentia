@@ -5,6 +5,7 @@ from . import models as resources_models
 from .forms import BaseResourceForm
 from django import forms
 from collections import OrderedDict
+from users.mixins import UsuarioDoNucleoRequiredMixin, UsuarioComumRequiredMixin
 
 
 class ResourceContextMixin:
@@ -18,7 +19,7 @@ class ResourceContextMixin:
         # URL de cancelamento dinâmica
         context['url_listagem'] = reverse_lazy(f'resources:{self.model._meta.model_name}_list')
         return context
-class ResourceBaseCreateUpdateView(ResourceContextMixin):
+class ResourceBaseCreateUpdateView(UsuarioDoNucleoRequiredMixin, ResourceContextMixin):
     template_name = 'licentia_resources/resource_form.html'
     # form_class = BaseResourceForm # Usa o form base com estilo Tabler
 
@@ -60,7 +61,6 @@ class ResourceBaseCreateUpdateView(ResourceContextMixin):
         # Adicionamos os de auditoria que existem no form ao final
         new_order.extend([f for f in audit_fields if f in form.fields])
         
-        from collections import OrderedDict
         form.fields = OrderedDict((k, form.fields[k]) for k in new_order)
 
         # 5. Bloquear campos de usuários
@@ -96,7 +96,7 @@ class ResourceBaseCreateUpdateView(ResourceContextMixin):
         # Gera a URL de listagem dinamicamente para o botão Cancelar
         context['url_listagem'] = reverse_lazy(f'resources:{self.model._meta.model_name}_list')
         return context
-class ResourceBaseListView(ResourceContextMixin, ListView):
+class ResourceBaseListView(UsuarioComumRequiredMixin, ResourceContextMixin, ListView):
     template_name = 'licentia_resources/resource_list.html'
     context_object_name = 'objetos'
 
