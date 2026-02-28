@@ -9,9 +9,10 @@ from django.views import View
 from django.shortcuts import redirect
 from django.db.models import Q
 from .filters import ProcessFilter
+from users.mixins import UsuarioComumRequiredMixin
 
 
-class ProcessContextMixin:
+class ProcessContextMixin(UsuarioComumRequiredMixin):
     login_url = 'users:login'
     """Mixin para padronizar variáveis de template e URLs"""
     def get_context_data(self, **kwargs):

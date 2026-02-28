@@ -1,10 +1,13 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
+from django.shortcuts import redirect
+
 
 class LicentiaPermissionMixin(UserPassesTestMixin):
     """Classe base para padronizar o erro 403 em todos os mixins"""
     def handle_no_permission(self):
-        raise PermissionDenied
+        return redirect('users:login')
+        # raise PermissionDenied
 
 class CoordenadorRequiredMixin(LicentiaPermissionMixin):
     def test_func(self):
