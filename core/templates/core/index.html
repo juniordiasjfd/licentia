@@ -40,24 +40,24 @@
   <div class="col-lg-4">
       <div class="card">
           <div class="card-body">
-              <h3 class="card-title">Valor por Status do Processo</h3>
-              <div id="chart-status-processo"></div>
+              <h3 class="card-title">R$/Status do processo</h3>
+              <div id="valor-chart-status-processo"></div>
           </div>
       </div>
   </div>
   <div class="col-lg-4">
       <div class="card">
           <div class="card-body">
-              <h3 class="card-title">Valor por Status do Orçamento</h3>
-              <div id="chart-status-orcamento"></div>
+              <h3 class="card-title">R$/Status do orçamento</h3>
+              <div id="valor-chart-status-orcamento"></div>
           </div>
       </div>
   </div>
   <div class="col-lg-4">
       <div class="card">
           <div class="card-body">
-              <h3 class="card-title">Valor por Status de Aprovação</h3>
-              <div id="chart-status-aprovacao"></div>
+              <h3 class="card-title">R$/Aprovação do orçamento</h3>
+              <div id="valor-chart-status-aprovacao"></div>
           </div>
       </div>
   </div>
@@ -70,7 +70,7 @@
 
 <script>
     // Função para criar os gráficos
-    function renderChart(elementId, chartData) {
+    function renderChart(elementId, chartData, unidade_medida, title_bar) {
         // Se não houver dados, exibe uma mensagem no console para debug
         if (!chartData || chartData.length === 0) {
             document.querySelector(elementId).innerHTML = "<p class='text-muted'>Sem dados para exibir</p>";
@@ -79,7 +79,7 @@
 
         const options = {
             series: [{
-                name: 'Valor total',
+                name: title_bar,
                 data: chartData.map(item => parseFloat(item.total_valor))
             }],
             chart: { type: 'bar', height: 300, toolbar: { show: false } },
@@ -93,11 +93,11 @@
             },
             yaxis: {
                 labels: {
-                    formatter: (value) => "R$ " + value.toLocaleString('pt-BR')
+                    formatter: (value) => unidade_medida + " " + value.toLocaleString('pt-BR')
                 }
             },
             tooltip: {
-                y: { formatter: (value) => "R$ " + value.toLocaleString('pt-BR') }
+                y: { formatter: (value) => unidade_medida + " " + value.toLocaleString('pt-BR') }
             }
         };
 
@@ -107,9 +107,9 @@
 
     // 2. Chamar a função para cada gráfico assim que o DOM carregar
     document.addEventListener("DOMContentLoaded", function () {
-        renderChart("#chart-status-processo", {{ data_status_do_processo|safe }});
-        renderChart("#chart-status-orcamento", {{ data_status_do_orcamento|safe }});
-        renderChart("#chart-status-aprovacao", {{ data_status_do_orcamento_aprovacao|safe }});
+        renderChart("#valor-chart-status-processo", {{ valor_status_do_processo|safe }}, "R$", "Valot total");
+        renderChart("#valor-chart-status-orcamento", {{ valor_status_do_orcamento|safe }}, "R$", "Valot total");
+        renderChart("#valor-chart-status-aprovacao", {{ valor_status_do_orcamento_aprovacao|safe }}, "R$", "Valot total");
     });
 </script>
 {% endblock %}

@@ -33,7 +33,7 @@ class HomeView(LoginRequiredMixin, ProcessContextMixin, TemplateView):
             qs = qs.filter(volume=volume)
 
         # 2. Agregações para os 3 Gráficos (Status + Valor)
-        context['data_status_do_processo'] = [
+        context['valor_status_do_processo'] = [
             {
                 'status': item['status_do_processo__nome'] or 'Não definido',
                 'total_valor': float(item['total_valor']) 
@@ -42,7 +42,7 @@ class HomeView(LoginRequiredMixin, ProcessContextMixin, TemplateView):
             .annotate(total_valor=Coalesce(Sum('valor_do_processo'), 0, output_field=DecimalField()))
             .order_by('-total_valor')
         ]
-        context['data_status_do_orcamento'] = [
+        context['valor_status_do_orcamento'] = [
             {
                 'status': item['status_do_orcamento__nome'] or 'Não definido',
                 'total_valor': float(item['total_valor'])
@@ -51,7 +51,7 @@ class HomeView(LoginRequiredMixin, ProcessContextMixin, TemplateView):
             .annotate(total_valor=Coalesce(Sum('valor_do_processo'), 0, output_field=DecimalField()))
             .order_by('-total_valor')
         ]
-        context['data_status_do_orcamento_aprovacao'] = [
+        context['valor_status_do_orcamento_aprovacao'] = [
             {
                 'status': item['status_do_orcamento_aprovacao__nome'] or 'Não definido',
                 'total_valor': float(item['total_valor'])
