@@ -53,3 +53,11 @@ class AtivacaoUsuarioForm(forms.ModelForm):
             grupo_atual = self.instance.groups.first()
             if grupo_atual:
                 self.initial['grupo'] = grupo_atual
+
+class PerfilDoUsuarioForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']
+        widgets = {field : forms.TextInput(attrs={'class': 'form-control'}) for field in fields}
+
+

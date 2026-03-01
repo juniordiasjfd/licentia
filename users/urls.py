@@ -6,6 +6,7 @@ app_name = 'users'
 
 urlpatterns = [
     path('registrar/', views.RegistroView.as_view(), name='registrar'),
+    path('perfil/<int:pk>', views.PerfilDoUsuarioUpdateView.as_view(), name='perfil'),
     path('gerenciar/', views.GerenciarUsuariosView.as_view(), name='gerenciar'),
     path('departamentos/', views.DepartamentoListView.as_view(), name='departamento_list'),
     path('departamentos/novo/', views.DepartamentoCreateView.as_view(), name='departamento_create'),

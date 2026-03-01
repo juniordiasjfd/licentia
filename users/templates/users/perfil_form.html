@@ -1,0 +1,58 @@
+{% extends "core/base.html" %}
+
+{% block page_title %}
+{% if object %}Editar{% else %}Novo{% endif %} {{ verbose_name }}
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <form method="post" class="card">
+            {% csrf_token %}
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fa-solid fa-pen-to-square me-2"></i>
+                    {% if object %}Editar{% else %}Cadastrar{% endif %} {{ verbose_name }}
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for field in form %}
+                        {# Adiciona divisor para auditoria #}
+                        {% if field.name == 'criado_por' %}
+                            <div class="col-12"><hr class="my-3"></div>
+                        {% endif %}
+                
+                        <div class="{% if field.name in 'criado_por atualizado_por criado_em atualizado_em' %}col-md-3{% else %}col-md-12{% endif %} mb-3">
+                            <label class="form-label">{{ field.label }}</label>
+                            
+                            {# Renderiza o campo sempre #}
+                            {{ field }}
+                
+                            {# Exibe erros se houverem #}
+                            {% if field.errors %}
+                                {% for error in field.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                
+                            {% if field.help_text %}
+                                <small class="form-hint text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="card-footer text-end">
+                <a href="{% url 'password_reset' %}" class="btn btn-link">Redefinir minha senha</a>
+
+                <a href="{% url 'core:home' %}" class="btn btn-link">Cancelar</a>
+
+                <button type="submit" class="btn btn-teal">
+                    <i class="fa-solid fa-check me-2"></i> Salvar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

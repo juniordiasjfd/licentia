@@ -1,7 +1,7 @@
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import ListView
-from .forms import RegistroUsuarioForm, AtivacaoUsuarioForm, DepartamentoForm
+from .forms import RegistroUsuarioForm, AtivacaoUsuarioForm, DepartamentoForm, PerfilDoUsuarioForm
 from django.contrib import messages
 from .models import User, Departamento, ConfiguracoesDoUsuario
 from django.shortcuts import render, get_object_or_404, redirect
@@ -138,6 +138,20 @@ class SuspenderUsuarioView(CoordenadorRequiredMixin, View):
         # Redireciona para a lista se alguém tentar aceder via URL (GET)
         return redirect('users:gerenciar')
 
+# View de Edição
+class PerfilDoUsuarioUpdateView(LoginRequiredMixin, DepartamentoContextMixin, UpdateView):
+    model = User
+    form_class = PerfilDoUsuarioForm
+    template_name = "users/perfil_form.html"
+    success_url = reverse_lazy("core:home")
 
+    def form_valid(self, form):
+        messages.success(self.request, f"{self.model._meta.verbose_name} atualizado com sucesso!")
+        return super().form_valid(form)
+    
+    def get_object(self, queryset=None):
+        # Isso ignora o PK da URL e garante que o objeto retornado 
+        # seja SEMPRE o usuário que está fazendo a requisição.
+        return self.request.user
 
 
