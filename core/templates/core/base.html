@@ -81,7 +81,7 @@
                       <span class="avatar avatar-sm bg-teal-lt">{{ user.username|slice:":2"|upper }}</span>
                       <div class="d-none d-xl-block ps-2">
                           <div>{{ user.get_full_name|default:user.username }}</div>
-                          <div class="mt-1 small text-muted">{{ user.departamento|default:"Sem Setor" }}</div>
+                          <div class="mt-1 small text-muted">{{ user.departamentos.all|join:", "|default:"Sem Setor" }}</div>
                       </div>
                   </a>
                   <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">

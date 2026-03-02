@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from decouple import config, Csv
+import dj_database_url
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -87,12 +89,25 @@ WSGI_APPLICATION = 'licentia_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+DATABASES = { # database de teste
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'licentia',        # O nome que você criou
+        'USER': 'django_app_user',           # O usuário que você criou
+        'PASSWORD': 'Scriba123',     # A senha desse usuário
+        'HOST': 'localhost',                 # O servidor é seu próprio computador
+        'PORT': '5432',                      # A porta padrão do PostgreSQL
     }
 }
+if DEBUG == False:
+    DATABASES['default'] = dj_database_url.parse(config('DATABASES_URL'))
+
 
 
 # Password validation

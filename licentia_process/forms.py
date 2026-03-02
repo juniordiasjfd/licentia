@@ -9,7 +9,6 @@ class ProcessForm(forms.ModelForm):
         widgets = {
             'retranca': forms.TextInput(attrs={'class': 'form-control'}),
             'capitulo_secao': forms.TextInput(attrs={'class': 'form-control'}),
-            'titulo_descricao': forms.TextInput(attrs={'class': 'form-control'}),
 
             'projeto': forms.Select(attrs={'class': 'form-select tom-select'}),
             'componente': forms.Select(attrs={'class': 'form-select tom-select'}),
@@ -39,6 +38,7 @@ class ProcessForm(forms.ModelForm):
             'codigo_biblioteca_link': forms.Textarea(attrs={'class': 'form-control'}),
             'observacao_exemplares': forms.Textarea(attrs={'class': 'form-control'}),
             'limitacao_outros': forms.Textarea(attrs={'class': 'form-control'}),
+            'titulo_descricao': forms.Textarea(attrs={'class': 'form-control'}),
 
             'solicitar_imagem': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch'}),
             'enviar_formulario': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch'}),

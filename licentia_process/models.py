@@ -36,7 +36,7 @@ class Process(AuditoriaBase):
 
     retranca = models.CharField('Retranca', max_length=100, unique=True)
     capitulo_secao = models.CharField('Capítulo ou seção', max_length=100, blank=True, null=True)
-    titulo_descricao = models.CharField('Título ou descrição', max_length=200, blank=True, null=True)
+    titulo_descricao = models.CharField('Título ou descrição', max_length=2000, blank=True, null=True)
     solicitado_para = models.CharField('Solicitado para', max_length=200, blank=True, null=True)
     
     obra_original = models.TextField('Obra original', max_length=1000, blank=True, null=True)
