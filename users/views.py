@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .mixins import CoordenadorRequiredMixin
 from django.views import View
 from django.contrib.messages.views import SuccessMessageMixin
+from licentia_process.models import Process
 
 
 class UserSettingsUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
@@ -153,5 +154,52 @@ class PerfilDoUsuarioUpdateView(LoginRequiredMixin, DepartamentoContextMixin, Up
         # Isso ignora o PK da URL e garante que o objeto retornado 
         # seja SEMPRE o usuário que está fazendo a requisição.
         return self.request.user
+
+class UserActionHistoryListView(LoginRequiredMixin, ListView):
+    model = Process.history.model  # Acessa o modelo de histórico diretamente
+    template_name = 'users/historico_do_usuario.html'
+    context_object_name = 'historicos'
+    paginate_by = 20  # Importante para não travar a página se houver muitos registros
+
+    def get_paginate_by(self, queryset):
+        # Busca a config do usuário. Se não existir, usa o padrão 20.
+        try:
+            return self.request.user.configuracoes.registros_por_pagina
+        except:
+            return self.paginate_by
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('pk')
+        self.target_user = get_object_or_404(User, pk=user_id)
+        qs = Process.history.filter(history_user=self.target_user).order_by('-history_date')
+        
+        # Otimização: carrega o usuário para evitar múltiplas queries
+        qs = qs.select_related('history_user')
+
+        for record in qs:
+            record.lista_changes = []
+            prev_record = record.prev_record
+            if prev_record:
+                delta = record.diff_against(prev_record)
+                for change in delta.changes:
+                    try:
+                        # Buscamos o nome do campo no modelo original Process
+                        verbose_name = Process._meta.get_field(change.field).verbose_name
+                    except:
+                        verbose_name = change.field
+                    
+                    record.lista_changes.append({
+                        'verbose': verbose_name,
+                        'old': change.old,
+                        'new': change.new
+                    })
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['target_user'] = self.target_user
+        context['titulo_pagina'] = f"Histórico de: {self.target_user.get_full_name() or self.target_user.username}"
+        return context
+
 
 

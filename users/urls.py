@@ -16,4 +16,5 @@ urlpatterns = [
     path('configuracoes/', views.UserSettingsUpdateView.as_view(), name='settings'),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='users:login'), name='logout'),
+    path('historico/<int:pk>/', views.UserActionHistoryListView.as_view(), name='historico'),
 ]

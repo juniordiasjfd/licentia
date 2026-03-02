@@ -1,0 +1,80 @@
+{% extends "core/base.html" %}
+
+{% block page_title %}Histórico{% endblock %}
+
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">{{ titulo_pagina }}</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-vcenter card-table">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Processo</th>
+                    <th>Ação</th>
+                    <th>O que foi alterado?</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in historicos %}
+                <tr>
+                    <td>{{ record.history_date|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <span class="badge badge-outline text-blue">
+                            <a href="{% url 'process:process_update' record.id %}" target="_blank">{{ record.retranca }}</a>
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge 
+                            {% if record.history_type == '+' %}bg-success
+                            {% elif record.history_type == '~' %}bg-warning
+                            {% else %}bg-danger{% endif %}">
+                            {{ record.get_history_type_display }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if record.history_type == '+' %}
+                            <span class="text-muted">Iniciou este processo</span>
+                        {% else %}
+                            <ul class="list-unstyled mb-0 small">
+                                {% for item in record.lista_changes %}
+                                    <li>
+                                        <strong>{{ item.verbose|capfirst }}:</strong>
+                                        <span class="text-muted">{{ item.old|default:"-" }}</span>
+                                        <i class="fa-solid fa-arrow-right mx-1 text-muted"></i>
+                                        <span class="fw-bold">{{ item.new|default:"-" }}</span>
+                                    </li>
+                                {% empty %}
+                                    <span class="text-muted italic">Nenhuma mudança de campo detectada</span>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">Você ainda não realizou ações no sistema.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    {% if is_paginated %}
+    <div class="card-footer d-flex align-items-center">
+        <ul class="pagination m-0 ms-auto">
+            {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
+            {% endif %}
+            <li class="page-item active"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
+            {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Próxima</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
