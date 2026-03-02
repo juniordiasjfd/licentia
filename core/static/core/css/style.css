@@ -1,0 +1,37 @@
+/* Classes para o CKEditor 5 */
+.destaqueamarelo {
+    background-color: #fff176;
+    font-weight: bold;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+.c3idioma {
+    background-color: lightblue;
+}
+.c3idiomabold{
+    background-color: lightblue;
+    font-weight: bold !important;
+}
+.c3idiomaitalico{
+    background-color: lightblue;
+    font-style: italic !important;
+}
+.c3idiomabolditalico{
+    background-color: lightblue;
+    font-weight: bold !important;
+    font-style: italic !important;
+}
+.latex {
+    background-color: rgb(240, 198, 229) !important;
+    border: 1px solid #f31f03 !important; 
+}
+.variavel {
+    background-color: rgb(175, 248, 161) !important;
+    border: 1px solid #039b03 !important; 
+}
+
+
+/* Ajustes de layout para o editor não quebrar o Bootstrap */
+.ck-editor__editable_inline {
+    min-height: 300px; /* Altura mínima para o campo de texto */
+}

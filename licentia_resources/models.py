@@ -1,6 +1,6 @@
 from django.db import models
 from core.models import AuditoriaBase
-
+from django_ckeditor_5.fields import CKEditor5Field
 
 
 class ConfiguracaoCoresStatusChoices:
@@ -162,6 +162,18 @@ class LimitacaoEdicao(AuditoriaBase):
     def __str__(self):
         return self.nome
 
+class TemplateDeEmail(AuditoriaBase):
+    nome = models.CharField('Nome', max_length=100, unique=True)
+    assunto = CKEditor5Field("Assunto do e-mail", config_name='default', blank=True, null=True, 
+                             help_text='Acesse <a href="https://www.google.com.br" target="_blank" class="text-primary fw-bold">https://www.google.com.br</a> para ajuda.')
+    mensagem = CKEditor5Field("Mensagem do e-mail", config_name='default', blank=True, null=True,
+                              help_text='Acesse <a href="https://www.google.com.br" target="_blank" class="text-primary fw-bold">https://www.google.com.br</a> para ajuda.')
+    class Meta:
+        verbose_name = 'Template de e-mail'
+        verbose_name_plural = 'Templates de e-mail'
+        ordering = ['nome']
+    def __str__(self):
+        return self.nome
 
 
 

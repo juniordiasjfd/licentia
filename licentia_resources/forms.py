@@ -1,10 +1,13 @@
 from django import forms
+from django_ckeditor_5.widgets import CKEditor5Widget
 
 class BaseResourceForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
         for field_name, field in self.fields.items():
+            if isinstance(field.widget, CKEditor5Widget):
+                continue
             # 1. Define a classe base do Tabler
             css_classes = 'form-control'
 

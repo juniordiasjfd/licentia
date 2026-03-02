@@ -10,7 +10,7 @@ modelos_recursos = [
     'StatusDoOrcamentoAprovacao', 'StatusDoProcessoPagamentoFornecedor',
     'StatusDoFreelaPagamento', 'StatusAnaliseEditorial', 'StatusAnaliseAutRec',
     'LocalizacaoDoRecurso', 'Fornecedor', 'Empresa', 'CentroDeCusto',
-    'TipoDeTermo', 'LimitacaoEdicao'
+    'TipoDeTermo', 'LimitacaoEdicao', 'TemplateDeEmail'
 ]
 
 urlpatterns = []

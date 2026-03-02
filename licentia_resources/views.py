@@ -220,4 +220,11 @@ class LimitacaoEdicaoCreateView(ResourceBaseCreateUpdateView, CreateView):
 class LimitacaoEdicaoUpdateView(ResourceBaseCreateUpdateView, UpdateView):
     model = resources_models.LimitacaoEdicao
 
+# --- TemplateDeEmail ---
+class TemplateDeEmailListView(ResourceBaseListView):
+    model = resources_models.TemplateDeEmail
+class TemplateDeEmailCreateView(ResourceBaseCreateUpdateView, CreateView):
+    model = resources_models.TemplateDeEmail
+class TemplateDeEmailUpdateView(ResourceBaseCreateUpdateView, UpdateView):
+    model = resources_models.TemplateDeEmail
 

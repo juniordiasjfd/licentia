@@ -4,6 +4,50 @@
 {% if object %}Editar{% else %}Novo{% endif %} {{ verbose_name }}
 {% endblock %}
 
+{% block extra_css %}
+{{ form.media }}
+<style>
+    .ck-editor__editable { min-height: 200px; }
+    /* Ajuste para o Tom Select não ficar esmagado */
+    .ts-control { border: 1px solid #dadcde; border-radius: 4px; }
+
+    .table td {
+    max-width: 320px;
+    word-break: break-word;
+}
+
+
+/* Botão Salvar e Permanecer - Fixo no Rodapé */
+.btn-save-sticky {
+    position: fixed;
+    bottom: 90px; /* Distância do fundo */
+    right: 30px;  /* Distância da direita */
+    z-index: 1030;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    border-radius: 50px;
+    padding: 12px 25px;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+    border: 2px solid #fff; /* Pequena borda para destacar de fundos variados */
+}
+
+.btn-save-sticky:hover {
+    transform: translateY(-5px); /* Efeito de levante ao passar o mouse */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Ajuste para telas pequenas */
+@media (max-width: 768px) {
+    .btn-save-sticky {
+        right: 20px;
+        bottom: 90px;
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
@@ -52,7 +96,7 @@
                             {% endif %}
                 
                             {% if field.help_text %}
-                                <small class="form-hint text-muted">{{ field.help_text }}</small>
+                                <p class="form-hint text-muted">{{ field.help_text|safe }}</p>
                             {% endif %}
                         </div>
                     {% endfor %}
