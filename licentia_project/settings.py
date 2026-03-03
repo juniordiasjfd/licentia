@@ -165,6 +165,7 @@ LOGOUT_REDIRECT_URL = 'users:login'
 
 # Exibe o e-mail de recuperação no terminal do VS Code/Console
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 
 
 CKEDITOR_5_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
