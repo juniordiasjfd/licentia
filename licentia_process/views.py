@@ -18,6 +18,7 @@ from django.urls import reverse
 from django.utils.html import escape
 from django.shortcuts import get_object_or_404
 from django.db import transaction
+from core.models import Notification
 
 
 
@@ -252,6 +253,13 @@ class SaveProcessLogView(View):
                     # # Não envia para si mesmo
                     # if user_mencionado == request.user:
                     #     continue
+                    Notification.objects.create(
+                        usuario=user_mencionado,
+                        processo=processo,
+                        log=log,
+                        mensagem=f"Você foi mencionado no processo {processo.retranca} [{texto}]",
+                        url=url_relativa
+                    )
 
                     if user_mencionado.email:
 

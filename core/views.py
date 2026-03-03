@@ -1,4 +1,4 @@
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Sum
 from licentia_process.models import Process
@@ -7,6 +7,10 @@ from licentia_resources.models import Projeto, Componente
 from django.db.models.functions import Coalesce
 from django.db.models import DecimalField, IntegerField
 from django.shortcuts import redirect
+from django.http import JsonResponse
+from django.views import View
+from django.shortcuts import get_object_or_404
+from .models import Notification
 
 
 class HomeView(LoginRequiredMixin, ProcessContextMixin, TemplateView):
@@ -103,3 +107,44 @@ class HomeView(LoginRequiredMixin, ProcessContextMixin, TemplateView):
     
 class InstrucoesView(TemplateView):
     template_name = 'core/instrucoes.html'
+
+class NotificationSetReadView(View):
+    def post(self, request, *args, **kwargs):
+
+        notificacao_id = request.POST.get("id")
+
+        if not notificacao_id:
+            return JsonResponse({"status": "error"}, status=400)
+
+        notificacao = get_object_or_404(
+            Notification,
+            id=notificacao_id,
+            usuario=request.user
+        )
+
+        if not notificacao.lida:
+            notificacao.lida = True
+            notificacao.save(update_fields=["lida"])
+
+        return JsonResponse({"status": "ok"})
+
+class NotificationListView(LoginRequiredMixin, ListView):
+    model = Notification
+    template_name = "core/notifications_list.html"
+    context_object_name = "notificacoes"
+    paginate_by = 15
+
+    def get_queryset(self):
+        queryset = Notification.objects.filter(
+            usuario=self.request.user
+        ).order_by("-criada_em")
+
+        filtro = self.request.GET.get("filtro")
+
+        if filtro == "nao_lidas":
+            queryset = queryset.filter(lida=False)
+
+        if filtro == "lidas":
+            queryset = queryset.filter(lida=True)
+
+        return queryset

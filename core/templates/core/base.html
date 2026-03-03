@@ -30,6 +30,10 @@
       font-size: 0.6rem;
       vertical-align: middle;
     }
+    .badge-notification {
+  font-size: 0.65rem;
+  padding: 4px 6px;
+}
   </style>
   {% block extra_css %}{% endblock %}
 </head>
@@ -209,6 +213,72 @@
                 </a>
               </li>
 
+              <li class="nav-item dropdown">
+                <a href="#" class="nav-link position-relative" data-bs-toggle="dropdown">
+                  <i class="fa-solid fa-bell fs-5 me-2"></i> Notificações
+              
+                  {% if notificacoes_nao_lidas > 0 %}
+                  <span class="badge bg-red badge-notification position-absolute top-0 start-100 translate-middle">
+                    {{ notificacoes_nao_lidas }}
+                  </span>
+                  {% endif %}
+                </a>
+              
+                <div class="dropdown-menu dropdown-menu-end dropdown-menu-card shadow-lg" style="width: 340px;">
+                  <div class="card">
+              
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <strong>Notificações</strong>
+                      {% if notificacoes_nao_lidas > 0 %}
+                      <span class="badge bg-red-lt text-red">
+                        {{ notificacoes_nao_lidas }} novas
+                      </span>
+                      {% endif %}
+                    </div>
+              
+                    <div class="list-group list-group-flush list-group-hoverable">
+              
+                      {% for n in request.user.notificacoes.all|slice:":5" %}
+                      <a href="{{ n.url }}"
+                        class="list-group-item list-group-item-action notificacao-item {% if not n.lida %}bg-red-lt{% endif %}"
+                        data-id="{{ n.id }}">
+              
+                        <div class="d-flex">
+                          <div class="me-3">
+                            <span class="avatar avatar-sm bg-teal-lt text-teal">
+                              <i class="fa-solid fa-bell"></i>
+                            </span>
+                          </div>
+              
+                          <div class="flex-fill">
+                            <div class="fw-semibold {% if n.lida %}text-muted{% endif %}">
+                              {{ n.mensagem|truncatechars:100 }}
+                            </div>
+                            <div class="small text-muted mt-1">
+                              {{ n.criada_em|date:"d/m/Y H:i" }}
+                            </div>
+                          </div>
+                        </div>
+              
+                      </a>
+                      {% empty %}
+                      <div class="p-3 text-center text-muted">
+                        Nenhuma notificação
+                      </div>
+                      {% endfor %}
+              
+                    </div>
+              
+                    <div class="card-footer text-center">
+                      <a href="{% url 'core:notifications_list' %}" class="text-decoration-none">
+                        Ver todas
+                      </a>
+                    </div>
+              
+                  </div>
+                </div>
+              </li>
+
             </ul>
           </div>
         </div>
@@ -263,6 +333,22 @@
           bsAlert.close();
         });
       }, 5000); // 5000ms = 5 segundos
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".notificacao-item").forEach(item => {
+        item.addEventListener("click", function(e) {
+            const id = this.dataset.id;
+            fetch("{% url 'core:notification_set_read' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: "id=" + id
+            });
+        });
+      });
     });
   </script>
   {% block extra_js %}{% endblock %}

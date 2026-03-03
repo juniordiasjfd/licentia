@@ -78,6 +78,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
 
                 'licentia_resources.context_processors.recursos_menu',
+                'core.context_processors.notificacoes_context',
             ],
         },
     },
