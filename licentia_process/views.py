@@ -10,6 +10,7 @@ from django.shortcuts import redirect
 from django.db.models import Q
 from .filters import ProcessFilter
 from users.mixins import UsuarioComumRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from users.models import User
 import re
 from django.core.mail import send_mail
@@ -174,15 +175,20 @@ class ProcessUpdateView(ProcessContextMixin, UpdateView):
         context["historico_alteracoes"] = historico
         return context
 
-class BuscarUsuariosView(View):
+class BuscarUsuariosView(LoginRequiredMixin, View):
     def get(self, request):
         termo = request.GET.get("q", "")
 
+        if not termo:
+            return JsonResponse([], safe=False)
+
         usuarios = User.objects.filter(
-            Q(username__icontains=termo) |
-            Q(first_name__icontains=termo) |
-            Q(last_name__icontains=termo)
-        )[:10]
+                is_active=True
+            ).filter(
+                Q(username__icontains=termo) |
+                Q(first_name__icontains=termo) |
+                Q(last_name__icontains=termo)
+            ).only("username", "first_name", "last_name", "email")[:10]
 
         resultados = [
             {
