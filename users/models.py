@@ -47,6 +47,7 @@ class ConfiguracoesDoUsuario(models.Model):
         choices=OrdenarPorChoices.choices,
         default=OrdenarPorChoices.ATUALIZADO_EM_ZA,
     )
+    receber_notificacoes_email = models.BooleanField("Receber notificações por e-mail", default=True)
     usuario = models.OneToOneField('users.User', on_delete=models.CASCADE, related_name='configuracoes')
     class Meta:
         verbose_name = 'Configuração do usuário'

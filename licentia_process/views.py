@@ -261,7 +261,14 @@ class SaveProcessLogView(View):
                         url=url_relativa
                     )
 
-                    if user_mencionado.email:
+                    config = getattr(user_mencionado, "configuracoes", None)
+
+                    if (
+                        user_mencionado.is_active and
+                        user_mencionado.email and
+                        config and
+                        config.receber_notificacoes_email
+                    ):
 
                         send_mail(
                             subject=f"Você foi mencionado no processo {processo.retranca}",

@@ -23,6 +23,27 @@
                     {{ form.ordenar_por }}
                     <small class="form-hint text-muted">Critério padrão de ordenação ao abrir o sistema.</small>
                 </div>
+
+                <div class="mb-3">
+                    <label class="form-label d-block">
+                        Receber notificações por e-mail
+                    </label>
+                
+                    <label class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="receber_notificacoes_email"
+                            id="id_receber_notificacoes_email" {% if form.receber_notificacoes_email.value %}checked{% endif %}>
+                
+                        <span class="form-check-label">
+                            Ativar notificações por e-mail
+                        </span>
+                    </label>
+                
+                    <small class="form-hint text-muted">
+                        Escolha se quer ser notificado por e-mail ao ser marcado em um processo.
+                    </small>
+                </div>
+
+                
             </div>
 
             <div class="card-footer text-end">

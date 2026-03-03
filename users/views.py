@@ -14,7 +14,7 @@ from licentia_process.models import Process
 
 class UserSettingsUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = ConfiguracoesDoUsuario
-    fields = ['registros_por_pagina', 'ordenar_por']
+    fields = ['registros_por_pagina', 'ordenar_por', 'receber_notificacoes_email']
     template_name = 'users/settings_form.html'
     success_url = reverse_lazy('users:settings')
     success_message = "Suas preferências foram atualizadas com sucesso!"

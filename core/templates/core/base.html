@@ -94,6 +94,9 @@
                       <a class="dropdown-item" href="{% url 'users:perfil' 0 %}">
                           <i class="fa-solid fa-user-gear me-2 text-muted"></i> Perfil
                       </a>
+                      <a class="dropdown-item" href="{% url 'users:settings' %}">
+                        <i class="fa-solid fa-user-gear me-2 text-muted"></i> Preferências
+                      </a>
                       <div class="dropdown-divider"></div>
                       <form action="{% url 'users:logout' %}" method="post">
                           {% csrf_token %}
@@ -174,7 +177,7 @@
                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside"
                   role="button">
                   <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="fa-solid fa-sliders"></i></span>
-                  <span class="nav-link-title">Configurações</span>
+                  <span class="nav-link-title">Configurações globais</span>
                 </a>
                 <!-- <div class="dropdown-menu">
                   <a class="dropdown-item" href="{% url 'users:gerenciar' %}">
@@ -192,11 +195,11 @@
                       <i class="fa-solid fa-sitemap me-2"></i> Departamentos
                   </a>
               
-                  <div class="dropdown-divider"></div>
+                  <!-- <div class="dropdown-divider"></div> -->
               
-                  <a class="dropdown-item" href="{% url 'users:settings' %}">
+                  <!-- <a class="dropdown-item" href="{% url 'users:settings' %}">
                       <i class="fa-solid fa-user-gear me-2"></i> Preferências de exibição
-                  </a>
+                  </a> -->
                   
                   
               </div>
