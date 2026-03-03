@@ -9,4 +9,5 @@ urlpatterns = [
     path('novo/', views.ProcessCreateView.as_view(), name='process_create'),
     path('editar/<int:pk>/', views.ProcessUpdateView.as_view(), name='process_update'),
     path('processos/log/save/', views.SaveProcessLogView.as_view(), name='save_process_log'),
+    path('ajax/usuarios/', views.BuscarUsuariosView.as_view(), name='buscar_usuarios'),
 ]

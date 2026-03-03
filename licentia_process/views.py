@@ -10,6 +10,15 @@ from django.shortcuts import redirect
 from django.db.models import Q
 from .filters import ProcessFilter
 from users.mixins import UsuarioComumRequiredMixin
+from users.models import User
+import re
+from django.core.mail import send_mail
+from django.conf import settings
+from django.urls import reverse
+from django.utils.html import escape
+from django.shortcuts import get_object_or_404
+from django.db import transaction
+
 
 
 class ProcessContextMixin(UsuarioComumRequiredMixin):
@@ -164,25 +173,121 @@ class ProcessUpdateView(ProcessContextMixin, UpdateView):
         context["historico_alteracoes"] = historico
         return context
 
+class BuscarUsuariosView(View):
+    def get(self, request):
+        termo = request.GET.get("q", "")
+
+        usuarios = User.objects.filter(
+            Q(username__icontains=termo) |
+            Q(first_name__icontains=termo) |
+            Q(last_name__icontains=termo)
+        )[:10]
+
+        resultados = [
+            {
+                "key": u.username,
+                "value": u.get_full_name() or u.username,
+                "email": u.email
+            }
+            for u in usuarios
+        ]
+
+        return JsonResponse(resultados, safe=False)
+
+def extrair_mencoes(texto):
+    """
+    Retorna uma lista de usernames mencionados com @
+    Ex: '@junior @maria' -> ['junior', 'maria']
+    """
+    padrao = r'@([\w.@+-]+)'
+    return re.findall(padrao, texto)
+
+def formatar_mencoes(texto):
+    """
+    Escapa o texto para evitar XSS
+    e transforma @usuario em badge HTML.
+    """
+    texto_seguro = escape(texto)
+
+    return re.sub(
+        r'@([\w.@+-]+)',
+        r'<span class="badge bg-teal">@\1</span>',
+        texto_seguro
+    )
+
 class SaveProcessLogView(View):
+
     def post(self, request, *args, **kwargs):
+
         texto = request.POST.get('texto')
         processo_id = request.POST.get('processo_id')
-        
-        if texto and processo_id:
-            processo = Process.objects.get(id=processo_id)
+
+        if not texto or not processo_id:
+            return JsonResponse({'status': 'error'}, status=400)
+
+        # Busca segura do processo
+        processo = get_object_or_404(Process, id=processo_id)
+
+        with transaction.atomic():
+
+            # Cria o log uma única vez
             log = ProcessLog.objects.create(
                 processo=processo,
                 usuario=request.user,
                 texto=texto
             )
-            return JsonResponse({
-                'status': 'success',
-                'usuario': log.usuario.get_full_name() or log.usuario.username,
-                'data': log.data_criacao.strftime('%d/%m/%Y %H:%M'), 
-                'texto': log.texto
-            })
-        return JsonResponse({'status': 'error'}, status=400)
+
+            # Gera URL absoluta
+            url_relativa = reverse('process:process_update', kwargs={'pk': processo.pk})
+            url_absoluta = request.build_absolute_uri(url_relativa)
+
+            # Detecta menções
+            usernames_mencionados = set(extrair_mencoes(texto))
+
+            for username in usernames_mencionados:
+
+                try:
+                    user_mencionado = User.objects.get(username=username)
+
+                    # # Não envia para si mesmo
+                    # if user_mencionado == request.user:
+                    #     continue
+
+                    if user_mencionado.email:
+
+                        send_mail(
+                            subject=f"Você foi mencionado no processo {processo.retranca}",
+                            message=f"""
+Olá {user_mencionado.get_full_name() or user_mencionado.username},
+
+Você foi mencionado no diário de bordo do processo: {processo.retranca}
+
+Mensagem:
+"{texto}"
+
+Autor da mensagem: {request.user.get_full_name() or request.user.username}
+
+Acesse diretamente pelo link: {url_absoluta}
+
+---
+Sistema Licentia
+""",
+                            from_email=settings.DEFAULT_FROM_EMAIL,
+                            recipient_list=[user_mencionado.email],
+                            fail_silently=True,
+                        )
+
+                except User.DoesNotExist:
+                    continue
+
+        return JsonResponse({
+            'status': 'success',
+            'usuario': log.usuario.get_full_name() or log.usuario.username,
+            'data': log.data_criacao.strftime('%d/%m/%Y %H:%M'),
+            'texto': formatar_mencoes(log.texto)
+        })
+
+
 
 
 
