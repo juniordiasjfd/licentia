@@ -112,7 +112,7 @@ class ProcessUpdateView(ProcessContextMixin, UpdateView):
         # Se o botão "permanecer" foi clicado, redireciona para a mesma página
         if "_continue" in self.request.POST:
             return redirect('process:process_update', pk=self.object.pk)
-        return super().form_valid(form)
+        return response
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
