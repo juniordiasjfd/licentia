@@ -207,7 +207,7 @@ CKEDITOR_5_CONFIGS = {
         'htmlSupport': {
             'allow': [
                 {
-                    'name': '\w+',
+                    'name': r'\w+',
                     'attributes': True,
                     'classes': True,
                     'styles': True
