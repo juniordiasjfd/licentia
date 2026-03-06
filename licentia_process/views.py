@@ -87,8 +87,8 @@ class ProcessListView(ProcessContextMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.filterset
-        
-        context["filtros_ativos"] = any(
+        context['busca_global_ativa'] = 'q' in self.request.GET
+        context["filtros_avancados_ativos"] = any(
             self.request.GET.get(k)
             for k in ProcessFilter.Meta.fields
         )

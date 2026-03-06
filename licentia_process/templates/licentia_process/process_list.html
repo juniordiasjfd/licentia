@@ -29,9 +29,10 @@
     
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    {% if filtros_ativos %}
+                    {% if busca_global_ativa %}
+                    <span class="me-2"></span>
                         <span class="text-muted small">
-                            Filtros ativos. <a href="{% url 'process:process_list' %}" class="text-danger">Limpar tudo</a>
+                            <a href="{% url 'process:process_list' %}" class="text-danger">Limpar busca</a>
                         </span>
                     {% endif %}
                 </div>
@@ -40,7 +41,7 @@
                 </button>
             </div>
     
-            <div class="collapse {% if filtros_ativos %}show{% endif %} mt-3" id="collapseFilters">
+            <div class="collapse {% if filtros_avancados_ativos %}show{% endif %} mt-3" id="collapseFilters">
                 <div class="card card-body shadow-sm bg-light">
                     <div class="row g-3">
 
