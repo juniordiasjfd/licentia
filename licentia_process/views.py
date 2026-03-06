@@ -20,7 +20,7 @@ from django.utils.html import escape
 from django.shortcuts import get_object_or_404
 from django.db import transaction
 from core.models import Notification
-
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 
 
 class ProcessContextMixin(UsuarioComumRequiredMixin):
@@ -42,16 +42,56 @@ class ProcessListView(ProcessContextMixin, ListView):
     paginate_by = 100
     def get_queryset(self):
         queryset = super().get_queryset()
+        queryset = queryset.select_related(
+            "fornecedor",
+            "empresa",
+            "projeto",
+            "componente"
+        )
         try:
             preferencia_ordem = self.request.user.configuracoes.ordenar_por
             queryset = queryset.order_by(preferencia_ordem)
         except:
             queryset = queryset.order_by('-atualizado_em')
+        
+        q = self.request.GET.get("q")
+        if q:
+            vector = (
+                SearchVector("pagina", weight="C") +
+                SearchVector("retranca", weight="A") +
+                SearchVector("capitulo_secao", weight="B") +
+                SearchVector("titulo_descricao", weight="B") +
+                SearchVector("obra_original", weight="A") +
+                SearchVector("codigo_biblioteca_link", weight="C") +
+                SearchVector("observacao_exemplares", weight="C") +
+                SearchVector("limitacao_outros", weight="C") +
+                SearchVector("observacao_editorial", weight="C") +
+                SearchVector("credito_obrigatorio", weight="C") +
+                SearchVector("observacao_autrec", weight="C") +
+                SearchVector("fornecedor__nome", weight="A") +
+                SearchVector("fornecedor__razao_social", weight="A") +
+                SearchVector("logs__texto", weight="C")
+            )
+
+            query = SearchQuery(q)
+
+            queryset = (
+                queryset
+                .annotate(rank=SearchRank(vector, query))
+                .filter(rank__gte=0.1)
+                .order_by("-rank")
+            )
+
         self.filterset = ProcessFilter(self.request.GET, queryset=queryset)
-        return self.filterset.qs
+        return self.filterset.qs.distinct()
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = self.filterset
+        
+        context["filtros_ativos"] = any(
+            self.request.GET.get(k)
+            for k in ProcessFilter.Meta.fields
+        )
         return context
     # def get_paginate_by(self, queryset):
     #     return self.request.GET.get('paginate_by', self.paginate_by)
